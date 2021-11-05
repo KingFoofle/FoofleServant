@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Permissions } = require('discord.js');
+const { logToAdminChannel } = require('../functions/logToAdminChannel');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,6 +19,7 @@ module.exports = {
 			if (member.bannable) {
 				// Ban and delete 7 days worth of messages
 				member.ban({ days: 7, reason: reason }).then(console.log).catch(console.error);
+				logToAdminChannel(interaction, message);
 			}
 
 			else {message = `You cannot ban ${member.user.username}!\nReason: Unbannable`;}
