@@ -1,6 +1,6 @@
 # FoofleServant
 
-![Diagram of Bot's Structure](images/Bot%20Diagram.png?raw=true "Diagram of Bot's Structure")
+![Diagram of Bot's Structure](res/Bot%20Diagram.png?raw=true "Diagram of Bot's Structure")
 
 To support simplicity in development, the bot supports:
 	* Event Handling
