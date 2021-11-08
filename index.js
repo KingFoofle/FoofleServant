@@ -4,18 +4,28 @@ const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+});
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs
+	.readdirSync('./commands')
+	.filter((file) => file.endsWith('.js'));
 
 client.buttonCommands = new Collection();
-const buttonFiles = fs.readdirSync('./commands/buttonCommands').filter(file => file.endsWith('.js'));
+const buttonFiles = fs
+	.readdirSync('./commands/buttonCommands')
+	.filter((file) => file.endsWith('.js'));
 
 client.debugCommands = new Collection();
-const debugFiles = fs.readdirSync('./commands/debugCommands').filter(file => file.endsWith('.js'));
+const debugFiles = fs
+	.readdirSync('./commands/debugCommands')
+	.filter((file) => file.endsWith('.js'));
 
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const eventFiles = fs
+	.readdirSync('./events')
+	.filter((file) => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);

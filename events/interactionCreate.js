@@ -9,7 +9,9 @@ module.exports = {
 				interaction.client.buttonCommands.get(interaction.customId);
 
 			if (command) {
-				console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction`);
+				console.log(
+					`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction`,
+				);
 				try {
 					// Calls files' execute method.
 					// All js files under /commands should have one
@@ -17,13 +19,14 @@ module.exports = {
 				}
 				catch (error) {
 					console.error(error);
-					interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+					interaction.reply({
+						content:
+							'There was an error while executing this command!',
+						ephemeral: true,
+					});
 				}
 			}
 		}
-
-		else {
-			return;
-		}
+		else { return; }
 	},
 };
