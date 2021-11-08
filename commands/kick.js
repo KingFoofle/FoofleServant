@@ -6,13 +6,15 @@ module.exports = {
 		.setName('kick')
 		.setDescription('Select a member and kick them.')
 		.addUserOption((option) =>
-			option.setName('target').setDescription('The member to kick'),
+			option
+				.setName('target')
+				.setDescription('The member to kick')
+				.setRequired(true),
 		)
 		.addStringOption((option) =>
 			option
 				.setName('reason')
-				.setDescription('Reason for kicking this user.')
-				.setRequired(false),
+				.setDescription('Reason for kicking this user.'),
 		),
 	async execute(interaction) {
 		const member = interaction.options.getMember('target');

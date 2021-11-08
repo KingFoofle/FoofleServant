@@ -5,13 +5,15 @@ module.exports = {
 		.setName('unban')
 		.setDescription('Select a member and unban them. Need an ID')
 		.addUserOption((option) =>
-			option.setName('target').setDescription('The member ID to unban'),
+			option
+				.setName('target')
+				.setDescription('The member ID to unban')
+				.setRequired(true),
 		)
 		.addStringOption((option) =>
 			option
 				.setName('reason')
-				.setDescription('Reason for unbanning this user.')
-				.setRequired(false),
+				.setDescription('Reason for unbanning this user.'),
 		),
 	async execute(interaction) {
 		// TODO: Only unban if they are banned
