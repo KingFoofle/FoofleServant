@@ -1,5 +1,7 @@
 # FoofleServant
 
+![Alt text](images/Bot%20Diagram.png?raw=true "Title")
+
 To support simplicity in development, the bot supports:
 	* Event Handling
 		1) Create a file
