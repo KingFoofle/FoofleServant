@@ -1,4 +1,4 @@
-// Run this file EVERY TIME you want to update a command
+// Run this file EVERY TIME you want to update a slash command
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
