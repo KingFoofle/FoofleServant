@@ -1,26 +1,33 @@
-const { clientId, foofleId } = require('../config.json');
+module.exports = (client, message) => {
+	const user = message.author;
+	const content = message.content;
+	const logger = client.logger;
+	const { prefix } = client.config;
+	const { commandTypes } = client.tools;
 
-module.exports = {
-	name: 'messageCreate',
-	execute(message) {
-		const user = message.author;
+	// Don't do anything with bot messages
+	if (message.author.bot) { return; }
 
-		// Don't do anything with bot messages
-		if (user.id === clientId) {
-			return;
-		}
+	// User sent a non-slash command!
+	if (content.startsWith(client.config.prefix)) {
+		// Remove the prefix, THEN split by " "
+		// / +/g means ALL spaces
+		const args = message.content.slice(prefix.length).trim().split(/ +/g);
 
-		// Only allow Foofle to run DEBUG Commands
-		if (message.author.id === foofleId) {
-			const command = message.client.debugCommands.get(message.content);
-			try {
-				if (command) {
-					command.execute(message);
-				}
+		// Shift() removes and returns the 0th index of an array
+		const commandName = args.shift();
+
+		const command = client.commands.get(commandTypes.COMMAND).get(commandName);
+		try {
+			if (command) {
+				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`)
+				// ...args means we unpack the array as parameters
+				command.execute(client, message, ...args);
 			}
-			catch (error) {
-				console.error(error);
-			}
 		}
-	},
+		catch (error) {
+			logger.error(error);
+		}
+	}
+
 };

@@ -19,9 +19,11 @@
   "dependencies": {
     "@discordjs/builders": "^0.8.2",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "chalk": "^4.1.2",
     "discord-api-types": "^0.24.0",
     "discord.js": "^13.3.1",
-    "latest-version": "^6.0.0"
+    "latest-version": "^6.0.0",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "eslint": "^8.1.0"
