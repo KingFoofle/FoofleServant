@@ -1,6 +1,10 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports.execute = async (client, message) => {
+	const { foofleId } = client.config;
+
+	// Can only be used by Foofle
+	if (message.author.id !== foofleId) return;
 	const row = new MessageActionRow().addComponents(
 		new MessageButton()
 			.setLabel('I accept')
