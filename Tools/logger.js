@@ -46,7 +46,7 @@ exports.cmd = (...args) => this.log(...args, 'cmd');
 exports.ready = (...args) => this.log(...args, 'ready');
 
 // Use when something succeeded
-exports.ready = (...args) => this.log(...args, 'success');
+exports.success = (...args) => this.log(...args, 'success');
 
 // Use when something loaded
 exports.load = (...args) => this.log(...args, 'load');
