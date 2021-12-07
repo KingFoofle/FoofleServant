@@ -1,4 +1,4 @@
-module.exports = (client, interaction) => {
+module.exports = async (client, interaction) => {
 	let command, commandList, logMessage;
 	const commands = client.commands;
 	const { commandTypes } = client.tools;

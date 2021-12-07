@@ -1,4 +1,4 @@
-module.exports = (client) => {
+module.exports = async (client) => {
 	client.logger.ready(`Ready! Logged in as ${client.user.tag}`);
 }
 

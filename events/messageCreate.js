@@ -1,4 +1,4 @@
-module.exports = (client, message) => {
+module.exports = async (client, message) => {
 	const user = message.author;
 	const content = message.content;
 	const logger = client.logger;
