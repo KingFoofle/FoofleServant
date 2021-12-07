@@ -2,7 +2,11 @@
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, token } = require('./config.json');
+
+// Importing this allows you to access the environment variables of the running node process
+
+require('dotenv').config();
+const envVars = process.env;
 
 const commands = [];
 const commandFiles = fs.readdirSync('./Commands/Slash').filter(file => file.endsWith('.js'));
@@ -12,8 +16,8 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '9' }).setToken(token);
+const rest = new REST({ version: '9' }).setToken(envVars.CLIENT_TOKEN);
 
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
+rest.put(Routes.applicationGuildCommands(envVars.CLIENT_ID, envVars.GUILD_ID), { body: commands })
 	.then(() => console.log('Successfully registered Slash commands.'))
 	.catch(console.error);
