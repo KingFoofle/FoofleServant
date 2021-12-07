@@ -12,7 +12,7 @@ module.exports = async (client, message) => {
 	if (content.startsWith(PREFIX)) {
 		// Remove the prefix, THEN split by " "
 		// / +/g means ALL spaces
-		const args = message.content.slice(prefix.length).trim().split(/ +/g);
+		const args = message.content.slice(PREFIX.length).trim().split(/ +/g);
 
 		// Shift() removes and returns the 0th index of an array
 		const commandName = args.shift();
@@ -20,7 +20,7 @@ module.exports = async (client, message) => {
 		const command = client.commands.get(commandTypes.COMMAND).get(commandName);
 		try {
 			if (command) {
-				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`)
+				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);
 				// ...args means we unpack the array as parameters
 				command.execute(client, message, ...args);
 			}
