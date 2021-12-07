@@ -8,7 +8,7 @@ module.exports = async (client, interaction) => {
 	if (interaction.isCommand()) {
 		commandList = commands.get(commandTypes.SLASH);
 		command = commandList.get(interaction.commandName);
-		logMessage = `used a slash command: ${interaction.commandName}`
+		logMessage = `used a slash command: ${interaction.commandName}`;
 	}
 
 	// Handles Button Interactions
@@ -16,14 +16,14 @@ module.exports = async (client, interaction) => {
 	else if (interaction.isButton()) {
 		commandList = commands.get(commandTypes.BUTTON);
 		command = commandList.get(interaction.customId);
-		logMessage = `clicked a button: ${interaction.customId}`
+		logMessage = `clicked a button: ${interaction.customId}`;
 	}
 
 	else { return; }
 
 	// Check if the command exists
 	if (command) {
-		const logType = interaction.isCommand() ? logger.cmd : logger.event
+		const logType = interaction.isCommand() ? logger.cmd : logger.event;
 		logType(
 			`${interaction.user.tag} in #${interaction.channel.name} ${logMessage}`,
 		);

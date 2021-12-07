@@ -13,7 +13,7 @@ module.exports.data = new SlashCommandBuilder()
 	.addStringOption((option) =>
 		option
 			.setName('reason')
-			.setDescription('Reason for banning this user.'))
+			.setDescription('Reason for banning this user.'));
 
 module.exports.execute = async (client, interaction) => {
 	const { logToAdminChannel } = client.tools;
