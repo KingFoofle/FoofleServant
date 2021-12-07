@@ -11,11 +11,11 @@ module.exports = async (client, reaction, user) => {
             return;
         }
     }
-    const { reactionMessageId } = client.config;
+    const { REACTION_MESSAGE_ID } = client.env;
     const { giveRole, emojiToRoleName, customEmojiIdToRoleName } = client.tools;
 
     // Here we assign roles!
-    if (message.id === reactionMessageId) {
+    if (message.id === REACTION_MESSAGE_ID) {
         let roleName = emojiToRoleName[reaction.emoji] || customEmojiIdToRoleName[reaction.emoji.id];
 
         // There is no direct way to go from User to GuildMember
