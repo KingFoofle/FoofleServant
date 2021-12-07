@@ -19,6 +19,11 @@ exports.log = (content, type = "log") => {
         case 'ready': {
             return console.log(`${timestamp} ${chalk.green(type.toUpperCase())} ${content}`);
         }
+
+        case 'success': {
+            return console.log(`${timestamp} ${chalk.green(type.toUpperCase())} ${content}`);
+        }
+
         case 'load': {
             return console.log(`${timestamp} ${chalk.magenta(type.toUpperCase())} ${content} `);
         }
@@ -39,6 +44,9 @@ exports.cmd = (...args) => this.log(...args, 'cmd');
 
 // Use when something is ready
 exports.ready = (...args) => this.log(...args, 'ready');
+
+// Use when something succeeded
+exports.success = (...args) => this.log(...args, 'success');
 
 // Use when something loaded
 exports.load = (...args) => this.log(...args, 'load');

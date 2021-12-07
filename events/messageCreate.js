@@ -2,14 +2,14 @@ module.exports = (client, message) => {
 	const user = message.author;
 	const content = message.content;
 	const logger = client.logger;
-	const { prefix } = client.config;
+	const { PREFIX } = client.env;
 	const { commandTypes } = client.tools;
 
 	// Don't do anything with bot messages
 	if (message.author.bot) { return; }
 
 	// User sent a non-slash command!
-	if (content.startsWith(client.config.prefix)) {
+	if (content.startsWith(PREFIX)) {
 		// Remove the prefix, THEN split by " "
 		// / +/g means ALL spaces
 		const args = message.content.slice(prefix.length).trim().split(/ +/g);

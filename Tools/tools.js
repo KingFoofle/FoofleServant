@@ -1,5 +1,16 @@
-module.exports.giveRole = (member, roleID) => {
-	member.roles.add(roleID);
+
+// Functions
+module.exports.giveRole = (member, roleName) => {
+	const { roles, guild, client, user } = member;
+	let role = guild.roles.cache.find(r => r.name === roleName);
+	if (role){
+		roles.add(role.id);
+		client.logger.event(`Gave ${user.username} role: ${role.name}`);
+	}
+
+	else{
+		client.logger.warn(`${guild.name} does not have a role named: ${roleName}`);
+	}
 }
 
 module.exports.logToAdminChannel = (client, message) => {
@@ -8,8 +19,18 @@ module.exports.logToAdminChannel = (client, message) => {
 	client.channels.cache.get(client.config.logChannelId).send(message);
 }
 
+// Constants
 module.exports.commandTypes = {
-    SLASH: "Slash",
-    COMMAND: "Command",
-    BUTTON: "Button"
+	SLASH: "Slash",
+	COMMAND: "Command",
+	BUTTON: "Button"
+}
+
+module.exports.emojiToRoleName = {
+	// 🎉 -> Events
+	'🎉': "Events"
+}
+
+module.exports.customEmojiIdToRoleName = {
+	// None
 }

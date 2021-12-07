@@ -3,3 +3,5 @@ config.json
 resources.txt
 ignoredCommands
 .eslintrc.json
+.env
+.vscode

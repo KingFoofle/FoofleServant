@@ -4,9 +4,13 @@ const { Client, Collection, Intents } = require('discord.js'),
 	util = require('util'),
 	readdir = util.promisify(fs.readdir);
 
+// Importing this allows you to access the environment variables of the running node process
+require("dotenv").config();
+
 // Create a new client instance
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 
 // Adding to the Client
@@ -14,7 +18,7 @@ client.commands = new Collection();
 client.event = new Collection();
 client.tools = require("./Tools/tools.js")
 client.logger = require('./Tools/logger.js');
-client.config = require('./config.json');
+client.env = process.env;
 // TODO: client.database = 
 
 async function init() {
@@ -59,7 +63,7 @@ async function init() {
 	console.log("====")
 
 	// Login to Discord with your client's token
-	await client.login(client.config.token);
+	await client.login(process.env.CLIENT_TOKEN);
 }
 
 init()
