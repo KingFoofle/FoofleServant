@@ -5,3 +5,4 @@ ignoredCommands
 .eslintrc.json
 .env
 .vscode
+IgnoredFiles
