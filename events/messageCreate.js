@@ -6,7 +6,7 @@ module.exports = async (client, message) => {
 	const { commandTypes } = client.tools;
 
 	// Don't do anything with bot messages
-	if (message.author.bot) { return; }
+	if (user.bot) { return; }
 
 	// User sent a non-slash command!
 	if (content.startsWith(PREFIX)) {
@@ -29,5 +29,11 @@ module.exports = async (client, message) => {
 			logger.error(error);
 		}
 	}
+
+	const data = { _id: user.id, username: user.username, $inc:{ currency:1 } };
+
+	// Upsert creates a new user if one isn't found
+	await client.database.userSchema.findByIdAndUpdate(user.id, data, { upsert: true, setDefaultsOnInsert: true });
+
 
 };

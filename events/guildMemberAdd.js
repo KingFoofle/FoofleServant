@@ -1,4 +1,3 @@
 module.exports = async (client, member) => {
-	const { userDB } = client.databases;
-
+	client.logger.log(`${member.username} joined the Server.`);
 };
