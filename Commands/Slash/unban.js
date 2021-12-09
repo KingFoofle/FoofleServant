@@ -16,10 +16,10 @@ module.exports.data = new SlashCommandBuilder()
 	);
 
 module.exports.execute = async (client, interaction) => {
-	// TODO: Only unban if they are banned
-	const id = interaction.options.get('target')?.value;
-	const reason = interaction.options.getString('reason');
+	const id = interaction.options.get('target')?.value,
+		reason = interaction.options.getString('reason');
 	let message = `You unbanned user with ID: ${id}`;
+
 	if (reason) {
 		message += `\nReason: ${reason}`;
 	}

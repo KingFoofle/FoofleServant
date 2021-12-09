@@ -1,10 +1,9 @@
 // Run this file EVERY TIME you want to update a slash command
-const fs = require('fs');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const fs = require('fs'),
+	{ REST } = require('@discordjs/rest'),
+	{ Routes } = require('discord-api-types/v9');
 
 // Importing this allows you to access the environment variables of the running node process
-
 require('dotenv').config();
 const envVars = process.env;
 

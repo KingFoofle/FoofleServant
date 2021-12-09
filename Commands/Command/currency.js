@@ -1,8 +1,8 @@
 module.exports.execute = async (client, message) => {
-	const { author } = message;
-	const { userSchema: userDB } = client.database;
+	const { author } = message,
+		{ userSchema: userDB } = client.database,
+		member = message.mentions.members.first();
 
-	const member = message.mentions.members.first();
 	let target;
 
 	// If no @ mention was included, use the author

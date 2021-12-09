@@ -1,16 +1,18 @@
 module.exports.execute = async (client, interaction) => {
-	const { giveRole } = client.tools;
-	const { userSchema } = client.database;
-	const { member } = interaction;
-	const message = 'Thank you for confirming!\nWelcome to the server!';
+	const { giveRole } = client.tools,
+		{ userSchema } = client.database,
+		{ member } = interaction,
+		{ username } = member.user;
+
+	// Give the Member role to whoever triggered the interaction
 	giveRole(member, 'Member');
-	interaction.reply({ content: message, ephemeral: true });
+	interaction.reply({ content: 'Thank you for confirming!\nWelcome to the server!', ephemeral: true });
 
 	// Register the User to MongoDB
-	const username = member.user.username;
-	const data = { _id: member.id, username:username };
 	client.logger.log(`Registering ${username} to MongoDB...`);
-	const foundUser = await userSchema.findByIdAndUpdate(member.id, data, { upsert:true, setDefaultsOnInsert: true });
+	const data = { _id: member.id, username:username },
+		foundUser = await userSchema.findByIdAndUpdate(member.id, data, { upsert:true, setDefaultsOnInsert: true });
+
 	if (foundUser) {
 		client.logger.warn(`${username} is already registered.`);
 	}

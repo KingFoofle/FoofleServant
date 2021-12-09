@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-module.exports.data = new SlashCommandBuilder()
+exports.data = new SlashCommandBuilder()
 	.setName('prune')
 	.setDescription('Prune a specified number of 14 day-old messages.')
 	.addIntegerOption((option) =>
@@ -10,32 +10,28 @@ module.exports.data = new SlashCommandBuilder()
 			.setRequired(true),
 	);
 
-module.exports.execute = async (client, interaction) => {
-	const amount = interaction.options.getInteger('amount');
-	const logger = client.logger;
+exports.execute = async (client, interaction) => {
+	const amount = interaction.options.getInteger('amount'),
+		{ logger } = client;
+
+	let message;
 
 	if (amount < 1) {
-		return interaction.reply({
-			content: 'You need to input a number higher than 0.',
-			ephemeral: true,
-		});
+		message = 'You need to input a number higher than 0.';
+	}
+	else {
+		try {
+			const deletedMessages = await interaction.channel.bulkDelete(amount, true);
+			message = `Successfully pruned \`${deletedMessages.size}\` messages.`;
+		}
+
+		catch (err) {
+			logger.error(err);
+			message = 'There was an error trying to prune messages in this channel!';
+		}
 	}
 
-	await interaction.channel
-		.bulkDelete(amount, true)
-		.then((messages) =>
-			interaction.reply({
-				content: `Successfully pruned \`${messages.size}\` messages.`,
-				ephemeral: true,
-			}),
-		)
-
-		.catch((error) => {
-			logger.error(error);
-			interaction.reply({
-				content:
-					'There was an error trying to prune messages in this channel!',
-				ephemeral: true,
-			});
-		});
+	interaction.reply({
+		content: message, ephemeral:true,
+	});
 };

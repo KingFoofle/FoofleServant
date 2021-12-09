@@ -1,14 +1,15 @@
 module.exports = async (client, interaction) => {
-	let command, commandList, logMessage;
-	const commands = client.commands;
-	const { commandTypes } = client.tools;
-	const logger = client.logger;
+	const { commands, logger } = client,
+		{ commandTypes } = client.tools;
+
+	let command, commandList, logMessage, logType;
 
 	// Handle Slash Commands Interactions
 	if (interaction.isCommand()) {
 		commandList = commands.get(commandTypes.SLASH);
 		command = commandList.get(interaction.commandName);
 		logMessage = `used a slash command: ${interaction.commandName}`;
+		logType = logger.cmd;
 	}
 
 	// Handles Button Interactions
@@ -17,13 +18,16 @@ module.exports = async (client, interaction) => {
 		commandList = commands.get(commandTypes.BUTTON);
 		command = commandList.get(interaction.customId);
 		logMessage = `clicked a button: ${interaction.customId}`;
+		logType = logger.event;
 	}
 
-	else { return; }
+	// What is even this interaction?
+	else {
+		return logger.warn(`Unknown Interaction: ${interaction.type}`);
+	}
 
 	// Check if the command exists
 	if (command) {
-		const logType = interaction.isCommand() ? logger.cmd : logger.event;
 		logType(
 			`${interaction.user.tag} in #${interaction.channel.name} ${logMessage}`,
 		);

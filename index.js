@@ -25,6 +25,11 @@ client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
 client.env = process.env;
 
+/**
+ *
+ * @param {String} directory The directory to traverse over
+ * @returns {Collection} A Collection that maps the file name to its module export
+ */
 async function loadFiles(directory) {
 	const data = new Collection();
 	// Load Files
@@ -35,20 +40,14 @@ async function loadFiles(directory) {
 	client.logger.load(`Loading ${directory}...`);
 
 	for (const file of files) {
-		const object = require(`./${directory}/${file}`);
-		const objectName = file.split('.')[0];
-		client.logger.load(`Attempting to Load: ${objectName}...`);
-		data.set(objectName, object);
+		const moduleExport = require(`./${directory}/${file}`);
+		const fileName = file.split('.')[0];
+		client.logger.load(`Attempting to Load: ${fileName}...`);
+		data.set(fileName, moduleExport);
 	}
 
 	return data;
 
-}
-
-async function connectMongoose() {
-	client.logger.load('Connecting Mongoose...');
-	await mongoose.connect(client.env.MONGO_URI);
-	client.logger.success('Mongoose has been connected.');
 }
 
 async function init() {
@@ -88,7 +87,9 @@ async function init() {
 
 	try {
 		// We await so that the Database is ready BEFORE we connect to Discord
-		await connectMongoose();
+		client.logger.load('Connecting Mongoose...');
+		await mongoose.connect(client.env.MONGO_URI);
+		client.logger.success('Mongoose has been connected.');
 
 		// Login to Discord with your client's token
 		client.login(process.env.CLIENT_TOKEN);

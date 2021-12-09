@@ -1,5 +1,8 @@
 const userSchema = require('./Schema/User.js');
 const productSchema = require('./Schema/Product.js');
 
-module.exports.userSchema = userSchema;
-module.exports.productSchema = productSchema;
+// TODO: Decide whether to use client.database.schemaName
+// or client.schemas.get("schemaName")
+
+exports.userSchema = userSchema;
+exports.productSchema = productSchema;
