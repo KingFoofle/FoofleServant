@@ -25,7 +25,8 @@
     "dotenv": "^10.0.0",
     "latest-version": "^6.0.0",
     "moment": "^2.29.1",
-    "mongodb": "^4.2.1"
+    "mongodb": "^4.2.1",
+    "mongoose": "^6.1.0"
   },
   "devDependencies": {
     "eslint": "^8.1.0"

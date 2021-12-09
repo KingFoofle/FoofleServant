@@ -7,9 +7,8 @@ const { Client, Collection, Intents } = require('discord.js'),
 // Importing this allows you to access the environment variables of the running node process
 require('dotenv').config();
 
-// MongoDB Setup
-const { MongoClient } = require('mongodb');
-const mongoClient = new MongoClient(process.env.MONGO_URI);
+// Mongoose Setup
+const mongoose = require('mongoose');
 
 // Create a new client instance
 const client = new Client({
@@ -23,18 +22,18 @@ client.event = new Collection();
 client.tools = require('./Tools/tools.js');
 client.logger = require('./Tools/logger.js');
 client.env = process.env;
-client.mongoClient = mongoClient;
 
-async function connectMongoDB() {
-	client.logger.load('Connecting to MongoDB Database...');
-	// Connect to MongoDB
-	await mongoClient.connect();
+async function connectMongoose() {
+	client.logger.load('Setting up Mongoose...');
+	const userDB = mongoose.createConnection(client.env.MONGO_USERS_URI);
+	const storeDB = mongoose.createConnection(client.env.MONGO_STORE_URI);
+	client.logger.success('Mongoose has been setup. Attatching to Client.');
 
-	client.logger.success('Connected to MongoDB.');
-
-	// If we want to connect to database "Delta" and Collection "Oof"
-	// we would write:
-	// mongoClient.db("Delta").collection("Oof")
+	// Assign the databases to the client
+	client.databases = {
+		users: userDB,
+		store: storeDB,
+	};
 }
 
 async function init() {
@@ -79,7 +78,8 @@ async function init() {
 	console.log('===================');
 
 	try {
-		connectMongoDB();
+		// We await so that the Database is ready BEFORE we connect to Discord
+		await connectMongoose();
 
 		// Login to Discord with your client's token
 		client.login(process.env.CLIENT_TOKEN);
