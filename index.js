@@ -7,6 +7,10 @@ const { Client, Collection, Intents } = require('discord.js'),
 // Importing this allows you to access the environment variables of the running node process
 require('dotenv').config();
 
+// MongoDB Setup
+const { MongoClient } = require('mongodb');
+const mongoClient = new MongoClient(process.env.MONGO_URI);
+
 // Create a new client instance
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
@@ -19,7 +23,19 @@ client.event = new Collection();
 client.tools = require('./Tools/tools.js');
 client.logger = require('./Tools/logger.js');
 client.env = process.env;
-// TODO: client.database =
+client.mongoClient = mongoClient;
+
+async function connectMongoDB() {
+	client.logger.load('Connecting to MongoDB Database...');
+	// Connect to MongoDB
+	await mongoClient.connect();
+
+	client.logger.success('Connected to MongoDB.');
+
+	// If we want to connect to database "Delta" and Collection "Oof"
+	// we would write:
+	// mongoClient.db("Delta").collection("Oof")
+}
 
 async function init() {
 
@@ -54,7 +70,7 @@ async function init() {
 		const eventName = file.split('.')[0];
 		client.logger.load(`Attempting to Load Event: ${eventName}...`);
 
-		// Attach client to every event
+		// Attach the event to the client
 		if (event.once) { client.once(eventName, event.bind(null, client)); }
 		else { client.on(eventName, event.bind(null, client)); }
 
@@ -62,9 +78,15 @@ async function init() {
 
 	console.log('===================');
 
-	// Login to Discord with your client's token
-	await client.login(process.env.CLIENT_TOKEN);
+	try {
+		connectMongoDB();
+
+		// Login to Discord with your client's token
+		client.login(process.env.CLIENT_TOKEN);
+	}
+	catch (err) {
+		client.logger.error(`An error occured: \n${err}`);
+	}
 }
 
 init();
-
