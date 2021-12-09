@@ -19,21 +19,36 @@ const client = new Client({
 // Adding to the Client
 client.commands = new Collection();
 client.event = new Collection();
+client.schemas = new Collection();
 client.tools = require('./Tools/tools.js');
 client.logger = require('./Tools/logger.js');
+client.database = require('./Database/Mongoose.js');
 client.env = process.env;
 
-async function connectMongoose() {
-	client.logger.load('Setting up Mongoose...');
-	const userDB = mongoose.createConnection(client.env.MONGO_USERS_URI);
-	const storeDB = mongoose.createConnection(client.env.MONGO_STORE_URI);
-	client.logger.success('Mongoose has been setup. Attatching to Client.');
+async function loadFiles(directory) {
+	const data = new Collection();
+	// Load Files
+	const files = fs
+		.readdirSync(`./${directory}`)
+		.filter((file) => file.endsWith('.js'));
 
-	// Assign the databases to the client
-	client.databases = {
-		users: userDB,
-		store: storeDB,
-	};
+	client.logger.load(`Loading ${directory}...`);
+
+	for (const file of files) {
+		const object = require(`./${directory}/${file}`);
+		const objectName = file.split('.')[0];
+		client.logger.load(`Attempting to Load: ${objectName}...`);
+		data.set(objectName, object);
+	}
+
+	return data;
+
+}
+
+async function connectMongoose() {
+	client.logger.load('Connecting Mongoose...');
+	await mongoose.connect(client.env.MONGO_URI);
+	client.logger.success('Mongoose has been connected.');
 }
 
 async function init() {
@@ -58,23 +73,17 @@ async function init() {
 	});
 
 	// Load events
-	const eventFiles = fs
-		.readdirSync('./Events')
-		.filter((file) => file.endsWith('.js'));
-
-	client.logger.load('Loading Events...');
-
-	for (const file of eventFiles) {
-		const event = require(`./Events/${file}`);
-		const eventName = file.split('.')[0];
-		client.logger.load(`Attempting to Load Event: ${eventName}...`);
-
+	const eventData = await loadFiles('Events');
+	eventData.forEach((event, eventName) => {
 		// Attach the event to the client
 		if (event.once) { client.once(eventName, event.bind(null, client)); }
 		else { client.on(eventName, event.bind(null, client)); }
+	});
 
-	}
+	console.log('===================');
 
+	// Load Schemas
+	client.schemas = loadFiles('Database/Schema');
 	console.log('===================');
 
 	try {
