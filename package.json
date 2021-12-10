@@ -6,6 +6,7 @@
   "scripts": {
     "deployAndStart": "npm run deploy && npm run start",
     "deploy" : "node deploy-commands.js",
+    "test": "echo \"Error: No Tests Present\" && exit 1",
     "start": "node index.js"
   },
   "repository": {
@@ -32,5 +33,9 @@
   },
   "devDependencies": {
     "eslint": "^8.1.0"
+  },
+  "engines": {
+    "node": "16.x",
+    "npm": "*"
   }
 }
