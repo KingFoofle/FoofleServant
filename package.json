@@ -4,7 +4,9 @@
   "description": "KingFoofle's personal Discord Bot",
   "main": "index.js",
   "scripts": {
-    "start": "start"
+    "deployAndStart": "npm run deploy && npm run start",
+    "deploy" : "node deploy-commands.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
