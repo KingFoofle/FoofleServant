@@ -8,13 +8,13 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 	let success;
 	let reason;
 
-	banReason = banReason ? banReason.join(' ') : 'No Reason Provided';
-
+	banReason = banReason ? banReason.join(' ') : 'No Reason Provided.';
 	if (!target) {reason = 'No User Mentioned!';}
 
 	else if (member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
 		if (target.id === member.id) {reason = 'You cannot ban yourself.';}
-		else if (target.bannable) {
+		// you cannot ban admins
+		else if (target.bannable && !(target.permissions.has(Permissions.FLAGS.BAN_MEMBERS))) {
 
 			try {
 				// Ban and delete 7 days worth of replys

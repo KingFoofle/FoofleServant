@@ -9,15 +9,13 @@ module.exports.execute = async (client, message, mention, ...kickReason) => {
 	let reason;
 
 	kickReason = kickReason ? kickReason.join(' ') : 'No Reason Provided';
-
 	if (!target) {reason = 'No User Mentioned!';}
 
 	else if (member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
 		if (target.id === member.id) {reason = 'You cannot kick yourself.';}
-		else if (target.kickable) {
+		else if (target.kickable && !(target.permissions.has(Permissions.FLAGS.KICK_MEMBERS))) {
 
 			try {
-				// Ban and delete 7 days worth of replys
 				await target.kick(kickReason);
 				success = true;
 			}
