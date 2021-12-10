@@ -82,7 +82,7 @@ async function init() {
 	console.log('===================');
 
 	// Load Schemas
-	client.schemas = loadFiles('Database/Schema');
+	client.schemas = await loadFiles('Database/Schema');
 	console.log('===================');
 
 	try {
