@@ -5,7 +5,7 @@ module.exports.execute = async (client, message, mention, ...kickReason) => {
 		{ member } = message,
 		{ logger } = client;
 
-	let success;
+	let kickedUser;
 	let reason;
 
 	kickReason = kickReason ? kickReason.join(' ') : 'No Reason Provided';
@@ -16,8 +16,7 @@ module.exports.execute = async (client, message, mention, ...kickReason) => {
 		else if (target.kickable && !(target.permissions.has(Permissions.FLAGS.KICK_MEMBERS))) {
 
 			try {
-				await target.kick(kickReason);
-				success = true;
+				kickedUser = await target.kick(kickReason);
 			}
 
 			catch (err) {
@@ -29,7 +28,7 @@ module.exports.execute = async (client, message, mention, ...kickReason) => {
 	}
 	else { reason = 'Insufficient Permissions';}
 
-	const reply = success ?
+	const reply = kickedUser ?
 		`You kicked ${target.user.username}.\nReason: ${kickReason}` :
 		`Kick unsuccessful.\nReason: ${reason}`;
 

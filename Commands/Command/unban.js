@@ -5,7 +5,6 @@ module.exports.execute = async (client, message, id, ...reason) => {
 		{ guild, member } = message;
 
 	let unbannedUser,
-		success,
 		failReason;
 
 
@@ -16,7 +15,6 @@ module.exports.execute = async (client, message, id, ...reason) => {
 		try {
 			unbannedUser = await guild.members.unban(id, reason);
 			logger.event(`${member.user.username} unbanned ${unbannedUser.username}`);
-			success = true;
 		}
 
 		catch (err) {
@@ -29,7 +27,7 @@ module.exports.execute = async (client, message, id, ...reason) => {
 		failReason = 'Insufficient Permissions.';
 	}
 
-	const reply = success ?
+	const reply = unbannedUser ?
 		`You unbanned ${unbannedUser.username}` :
 		`Unbanning Failed.\nReason: ${failReason}`;
 

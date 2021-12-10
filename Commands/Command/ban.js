@@ -5,7 +5,7 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 		{ member } = message,
 		{ logger } = client;
 
-	let success;
+	let bannedUser;
 	let reason;
 
 	banReason = banReason ? banReason.join(' ') : 'No Reason Provided.';
@@ -18,8 +18,7 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 
 			try {
 				// Ban and delete 7 days worth of replys
-				await target.ban({ days: 7, reason: reason });
-				success = true;
+				bannedUser = await target.ban({ days: 7, reason: banReason });
 			}
 
 			catch (err) {
@@ -31,7 +30,7 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 	}
 	else { reason = 'Insufficient Permissions';}
 
-	const reply = success ?
+	const reply = bannedUser ?
 		`You banned ${target.user.username}.\nReason: ${banReason}` :
 		`Ban unsuccessful.\nReason: ${reason}`;
 
