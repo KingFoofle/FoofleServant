@@ -32,6 +32,7 @@ module.exports = async (client, message) => {
 	const data = { _id: user.id, username: user.username, $inc:{ currency:1 } };
 
 	// Upsert creates a new user if one isn't found
+	// Increase the User's currency
 	await client.database.userSchema.findByIdAndUpdate(user.id, data, { upsert: true, setDefaultsOnInsert: true });
 
 
