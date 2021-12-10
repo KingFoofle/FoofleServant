@@ -7,7 +7,6 @@ module.exports = async (client) => {
 		activity = 'Foofle is performing maintenance on me.';
 		type = 'WATCHING';
 	}
-
 	else {
 		status = 'online';
 		activity = 'Feeling great! Type $help for a list of commands';
