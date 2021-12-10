@@ -1,11 +1,49 @@
-// Functions
+const { MessageEmbed } = require('discord.js');
+
+
+/**
+ * Constructs a Leaderboard Embed Message.
+ * @param {Object} args
+ * @param {*} args.database - The database to search through
+ * @param {Object} args.filter - The filter applied to the database
+ * @param {String} args.title - The Title of the Leaderboard
+ * @param {String} args.subtitle - The Title of the values column
+ * @returns The Leaderboard Embed Message
+ */
+exports.buildLeaderBoard = async function({ database, filter, title, subtitle }) {
+	// The columns of the leaderboard
+	let names = '', values = '', divisor = '';
+	const medals = ['🥇', '🥈', '🥉' ];
+	const users = await database.find({}).sort(filter).limit(10);
+	let i = 1;
+
+	// Build each column
+	for (const user of users) {
+		const medal = i - 1 < medals.length ? medals[i - 1] : '';
+		names = names.concat(`#${i++} ${user.username}${medal}\n`);
+		divisor = divisor.concat('|\n');
+		values = values.concat(`${user.currency}\n`);
+	}
+
+	return new MessageEmbed()
+		.setColor('#0099ff')
+		.setTitle(title)
+		.addFields(
+			{ name: `_Top ${users.length}_`, value: names, inline:true },
+			{ name: '\u200B', value: divisor, inline:true },
+			{ name:subtitle, value: values, inline:true })
+		.addField('\u200B', '\u200B')
+		.setFooter('Last Updated: ')
+		.setTimestamp();
+};
 
 /**
  * Assigns the roleName parameter to member, if said role exists
- * @param {GuildMember} member
- * @param {String} roleName
+ * @param {Object} args
+ * @param {*} args.member
+ * @param {String} args.roleName
  */
-exports.giveRole = (member, roleName) => {
+exports.giveRole = ({ member, roleName }) => {
 	const { roles, guild, client, user } = member;
 	const role = guild.roles.cache.find(r => r.name === roleName);
 	if (role) {
