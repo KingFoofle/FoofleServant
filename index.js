@@ -30,7 +30,7 @@ client.env = process.env;
  * @param {String} directory The directory to traverse over
  * @returns {Collection} A Collection that maps the file name to its module export
  */
-async function loadFiles(directory) {
+function loadFiles(directory) {
 	const data = new Collection();
 	// Load Files
 	const files = fs
@@ -72,7 +72,7 @@ async function init() {
 	});
 
 	// Load events
-	const eventData = await loadFiles('Events');
+	const eventData = loadFiles('Events');
 	eventData.forEach((event, eventName) => {
 		// Attach the event to the client
 		if (event.once) { client.once(eventName, event.bind(null, client)); }
@@ -82,7 +82,7 @@ async function init() {
 	console.log('===================');
 
 	// Load Schemas
-	client.schemas = await loadFiles('Database/Schema');
+	client.schemas = loadFiles('Database/Schema');
 	console.log('===================');
 
 	try {
