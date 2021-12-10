@@ -71,8 +71,9 @@ exports.commandTypes = {
 };
 
 exports.emojiToRoleName = {
-	// 🎉 -> Events
 	'🎉': 'Events',
+	'🧏': 'Podcasts',
+	'🏆': 'Tournaments',
 };
 
 exports.customEmojiIdToRoleName = {
