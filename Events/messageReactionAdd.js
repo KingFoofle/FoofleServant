@@ -24,7 +24,7 @@ module.exports = async (client, reaction, user) => {
 		// and obtain the GuildMember via ID
 		const member = message.guild.members.cache.get(user.id);
 		if (roleName) {
-			giveRole(member, roleName);
+			giveRole({ member: member, roleName: roleName });
 		}
 	}
 };

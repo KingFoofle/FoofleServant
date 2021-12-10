@@ -5,7 +5,7 @@ module.exports.execute = async (client, interaction) => {
 		{ username } = member.user;
 
 	// Give the Member role to whoever triggered the interaction
-	giveRole(member, 'Member');
+	giveRole({ member:member, roleName:'Member' });
 	interaction.reply({ content: 'Thank you for confirming!\nWelcome to the server!', ephemeral: true });
 
 	// Register the User to MongoDB
