@@ -12,7 +12,7 @@ module.exports.execute = async (client, message, mention, ...kickReason) => {
 
 	if (!target) {reason = 'No User Mentioned!';}
 
-	if (member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+	else if (member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
 		if (target.id === member.id) {reason = 'You cannot kick yourself.';}
 		else if (target.kickable) {
 
