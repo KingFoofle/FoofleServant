@@ -12,7 +12,35 @@ const mongoose = require('mongoose');
 
 // Create a new client instance
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+	intents: [
+		// [] = Unused, [x] = Used
+
+		// Gives the bot like, 80 events, but we need it to be able to access
+		// channel and message cache
+		Intents.FLAGS.GUILDS,
+
+		/* Gives the bot access to these events:
+			- MESSAGE_CREATE 				[x]
+			- MESSAGE_UPDATE 				[]
+			- MESSAGE_DELETE 				[]
+			- MESSAGE_DELETE_BULK 			[]
+		 */
+		Intents.FLAGS.GUILD_MESSAGES,
+
+		/* Gives the bot access to these events:
+			- MESSAGE_REACTION_ADD 			[x]
+			- MESSAGE_REACTION_REMOVE		[]
+			- MESSAGE_REACTION_REMOVE_ALL	[]
+			- MESSAGE_REACTION_REMOVE_EMOJI	[]
+		*/
+		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+
+		/* Gives the bot access to these events:
+			- GUILD_BAN_ADD 				[x]
+			- GUILD_BAN_REMOVE				[]
+		*/
+		Intents.FLAGS.GUILD_BANS,
+	],
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 
