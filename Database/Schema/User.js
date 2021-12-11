@@ -12,4 +12,9 @@ module.exports = mongoose.model('User', new mongoose.Schema({
 
 	// The users' currency
 	currency: { type: Number, default: 0 },
+
+	// The users' inventory
+	// Key: The name of the item
+	// Value: The count of the item
+	inventory: { type: Map, of: Number },
 }));
