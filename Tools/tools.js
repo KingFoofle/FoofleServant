@@ -38,6 +38,14 @@ exports.buildLeaderBoard = async function({ database, filter, title, subtitle })
 };
 
 /**
+ * Given a User ID, return their respective GuildMember instance
+ */
+exports.getMemberFromUserId = async function(client, userId) {
+	const { GUILD_ID } = client.env;
+	return client.guilds.cache.get(GUILD_ID).members.cache.get(userId);
+};
+
+/**
  * Assigns the roleName parameter to member, if said role exists
  * @param {Object} args
  * @param {*} args.member

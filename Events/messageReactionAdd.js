@@ -22,7 +22,7 @@ module.exports = async (client, reaction, user) => {
 		// There is no direct way to go from User to GuildMember
 		// So what we do is access the guild that the reaction is coming from
 		// and obtain the GuildMember via ID
-		const member = message.guild.members.cache.get(user.id);
+		const member = client.tools.getMemberFromUserId(user.id);
 		if (roleName) {
 			giveRole({ member: member, roleName: roleName });
 		}

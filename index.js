@@ -2,6 +2,7 @@
 const { Client, Collection, Intents } = require('discord.js'),
 	fs = require('fs'),
 	util = require('util'),
+	{ MusicManager } = require('./Tools/music.js'),
 	readdir = util.promisify(fs.readdir);
 
 // Importing this allows you to access the environment variables of the running node process
@@ -40,6 +41,8 @@ const client = new Client({
 			- GUILD_BAN_REMOVE				[]
 		*/
 		Intents.FLAGS.GUILD_BANS,
+
+		Intents.FLAGS.GUILD_VOICE_STATES,
 	],
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
@@ -52,6 +55,7 @@ client.tools = require('./Tools/tools.js');
 client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
 client.env = process.env;
+client.music = new MusicManager(client, client.env.GUILD_ID);
 
 /**
  *
