@@ -1,0 +1,1 @@
+module.exports = async (client, interaction, product) => {const { member } = interaction;};
