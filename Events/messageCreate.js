@@ -40,6 +40,14 @@ module.exports = async (client, message) => {
 			if (command) {
 
 				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);
+
+				// Voice Commands can only be used in a Voice Channel
+				// TODO: Add DJ Role
+				if (commandType === commandTypes.VOICE) {
+					const { voice: voiceState } = message.member;
+
+					if (!voiceState || !voiceState.channel) {return message.reply('You are not connected to a voice channel!');}
+				}
 				// ...args means we unpack the array as parameters
 				command.execute(client, message, ...args);
 
@@ -59,9 +67,7 @@ module.exports = async (client, message) => {
 				else {channel.reply('You cannot use this command! Reason: Invalid Permissions');}
 			}
 		}
-		catch (error) {
-			logger.error(error);
-		}
+		catch (error) {logger.error(error);}
 	}
 
 	const data = { _id: user.id, username: user.username, $inc:{ currency:1 } };

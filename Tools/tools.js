@@ -1,10 +1,5 @@
 const { MessageEmbed } = require('discord.js');
 
-function createEmbed() {
-	return new MessageEmbed()
-		.setColor(process.env.EMBED_COLOR);
-}
-
 function buildEmbed(title, fields) {
 	return createEmbed()
 		.setTitle(title)
@@ -35,16 +30,64 @@ exports.buildLeaderBoard = async function({ database, filter, title, subtitle })
 		values = values.concat(`${user.currency}\n`);
 	}
 
-	return new MessageEmbed()
-		.setColor('#0099ff')
-		.setTitle(title)
-		.addFields(
-			{ name: `_Top ${users.length}_`, value: names, inline:true },
-			{ name: '\u200B', value: divisor, inline:true },
-			{ name:subtitle, value: values, inline:true })
+	return buildEmbed(title, [
+		{ name: `_Top ${users.length}_`, value: names, inline:true },
+		{ name: '\u200B', value: divisor, inline:true },
+		{ name:subtitle, value: values, inline:true },
+	])
 		.addField('\u200B', '\u200B')
 		.setFooter('Last Updated: ')
 		.setTimestamp();
+};
+
+/**
+ *
+ * @param {Array} videos
+ */
+exports.buildQueue = function(videos) {
+	let names = '', values = '', divisor = '';
+	const videoCount = videos.length - 11 < 0 ? 0 : videos.length - 11;
+
+	// Build each column
+	let i = 1;
+	videos.slice(1, 11).forEach(video => {
+		names = names.concat(`${i++}) ${video.title}\n`);
+		divisor = divisor.concat('|\n');
+		values = values.concat(`${video.duration}\n`);
+	});
+
+	// Build the Embed, and include the current song
+	const embed = createEmbed()
+		.setTitle('Queue')
+		.addFields([
+			{ name:'Current Song', value:`${videos[0].title}`, inline:true },
+			{ name: '\u200B', value: '|', inline:true },
+			{ name: 'Duration', value:videos[0].duration, inline:true },
+		]);
+
+	// Add the songs in the queue, if present
+	if (names) {
+		embed.addFields([
+			{ name:'\u200B', value: '\u200B' },
+			{ name: 'Song Title', value: names, inline:true },
+			{ name: '\u200B', value: divisor, inline:true },
+			{ name: 'Duration', value: values, inline:true },
+		]);
+	}
+
+	// Include songs that aren't listed
+	if (videoCount) {embed.setFooter(`And ${videoCount} more songs...`);}
+
+	return embed;
+
+};
+
+/**
+ * Given a User ID, return their respective GuildMember instance
+ */
+exports.getMemberFromUserId = async function(client, userId) {
+	const { GUILD_ID } = client.env;
+	return client.guilds.cache.get(GUILD_ID).members.cache.get(userId);
 };
 
 /**
@@ -64,6 +107,32 @@ exports.giveRole = ({ member, roleName }) => {
 	else {
 		client.logger.warn(`${guild.name} does not have a role named: ${roleName}`);
 	}
+};
+
+
+// https://stackoverflow.com/questions/9763441/milliseconds-to-time-in-javascript/9763479
+exports.secondsToTime = function(s) {
+
+	// Pad to 2 or 3 digits, default is 2
+	function pad(n, z) {
+		z = z || 2;
+		return ('00' + n).slice(-z);
+	}
+
+	const secs = s % 60;
+	s = (s - secs) / 60;
+	const mins = s % 60;
+	const hrs = (s - mins) / 60;
+
+	return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
+};
+
+/**
+ *
+ * @returns {MessageEmbed}
+ */
+const createEmbed = exports.createEmbed = function() {
+	return new MessageEmbed().setColor(process.env.EMBED_COLOR);
 };
 
 // TODO: Update this. client.config doesn't exist, and I'm sure message.client is a thing

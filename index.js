@@ -56,6 +56,7 @@ client.tools = require('./Tools/tools.js');
 client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
 client.env = process.env;
+client.music = require('./Music/musicManager.js');
 
 /**
  *

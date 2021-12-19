@@ -34,6 +34,9 @@ module.exports = async (client) => {
 		type = 'PLAYING';
 	}
 
+	// Initializing the tools
+	client.music.init(client);
+
 	client.user.setPresence({ activities: [{ name: activity, type:type }], status: status });
 	updateLeaderBoards(client);
 	client.logger.ready(`Ready! Logged in as ${client.user.tag}`);
