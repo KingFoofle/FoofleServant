@@ -24,11 +24,13 @@ exports.buildLeaderBoard = async function({ database, filter, title, subtitle })
 		values = values.concat(`${user.currency}\n`);
 	}
 
-	return createEmbed().setTitle(title).addFields([
-		{ name: `_Top ${users.length}_`, value: names, inline:true },
-		{ name: '\u200B', value: divisor, inline:true },
-		{ name:subtitle, value: values, inline:true },
-	])
+	return createEmbed()
+		.setTitle(title)
+		.addFields([
+			{ name: `_Top ${users.length}_`, value: names, inline:true },
+			{ name: '\u200B', value: divisor, inline:true },
+			{ name:subtitle, value: values, inline:true },
+		])
 		.addField('\u200B', '\u200B')
 		.setFooter('Last Updated: ')
 		.setTimestamp();
@@ -119,6 +121,24 @@ exports.secondsToTime = function(s) {
 	const hrs = (s - mins) / 60;
 
 	return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
+};
+
+const hasRoleName = exports.hasRoleName = (member, roleName) => {
+	return member.roles.cache.some(role => role.name.toLowerCase() === roleName.toLowerCase());
+};
+
+exports.adminVerification = function(member) {
+	return hasRoleName(member, 'administrator');
+};
+
+exports.modVerification = function(member) {
+	return hasRoleName(member, 'moderator');
+};
+
+
+exports.voiceVerification = function(member) {
+	const { voice: voiceState } = member;
+	return !voiceState || !voiceState.channel;
 };
 
 /**

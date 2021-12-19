@@ -23,3 +23,9 @@ module.exports.execute = async (client, message, ...otherArgs) => {
 
 
 };
+
+exports.canBeUsedBy = (client, member) => {
+	if (!client.tools.voiceVerification(member)) {
+		return { reason: 'Not Connected to a Voice Channel!' };
+	}
+};

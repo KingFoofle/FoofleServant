@@ -1,8 +1,6 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports.execute = async (client, message) => {
-	// Can only be used by Foofle
-	if (message.author.id !== client.env.OWNER_ID) return;
 	const row = new MessageActionRow().addComponents(
 		new MessageButton()
 			.setLabel('I accept')
@@ -20,4 +18,11 @@ module.exports.execute = async (client, message) => {
 		components: [row],
 	});
 
+};
+
+exports.canBeUsedBy = (client, member) => {
+	// Can only be used by Foofle
+	if (member.id !== client.env.OWNER_ID) {
+		return { reason: 'Insufficient Permissions' };
+	}
 };

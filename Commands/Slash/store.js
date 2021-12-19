@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders'),
-	{ MessageEmbed } = require('discord.js'),
 	StoreMenu = require('../../Tools/menu.js'),
 	PRODUCTS_PER_PAGE = 10;
 
@@ -38,7 +37,7 @@ exports.execute = async (client, interaction) => {
 			productPrices = productPrices.concat(`${product.price}\n`);
 		}
 
-		const page = new MessageEmbed()
+		const page = client.tools.createEmbed()
 			.setTitle('The Foof Store')
 			.addField('Name', productNames, true)
 			.addField('Price', productPrices, true)

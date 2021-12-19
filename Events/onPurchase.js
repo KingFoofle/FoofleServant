@@ -20,7 +20,6 @@ module.exports = async (client, interaction, product) => {
 			// If we are here, it means that the command did its job and we should charge the user
 			await userDB.findByIdAndUpdate(member.id, { $inc: { currency: -product.price } });
 			message = 'Your purchase has been successful!';
-
 		}
 		catch (err) {
 			message = 'An Error has Occurred. You have not been charged for this purchase.';
