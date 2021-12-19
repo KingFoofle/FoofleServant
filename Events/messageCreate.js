@@ -39,26 +39,20 @@ module.exports = async (client, message) => {
 			// A command was found
 			if (command) {
 
-				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);
-
-				// Voice Commands can only be used in a Voice Channel
-				// TODO: Add DJ Role
-				if (commandType === commandTypes.VOICE) {
-					const { voice: voiceState } = message.member;
-
-					if (!voiceState || !voiceState.channel) {return message.reply('You are not connected to a voice channel!');}
-				}
-				// ...args means we unpack the array as parameters
-				command.execute(client, message, ...args);
-
 				// The command can be used if:
 				// - The file did not define its restrictions
 				// - The member meets all the criteria to use the command
 				const canBeUsed = !command.canBeUsed || command.canBeUsedBy(member);
 
-				// TODO: Add a Reason depending on the category of the command (ADMIN/VOICE)
-
 				if (canBeUsed) {
+					// Voice Commands can only be used in a Voice Channel
+					// TODO: Add a Reason depending on the category of the command (ADMIN/VOICE)
+					// TODO: Add DJ Role
+					if (commandType === commandTypes.VOICE) {
+						const { voice: voiceState } = message.member;
+						if (!voiceState || !voiceState.channel) {return message.reply('You are not connected to a voice channel!');}
+					}
+
 					logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);
 					// ...args means we unpack the array as parameters
 					command.execute(client, message, ...args);
@@ -75,6 +69,4 @@ module.exports = async (client, message) => {
 	// Upsert creates a new user if one isn't found
 	// Increase the User's currency
 	await client.database.userSchema.findByIdAndUpdate(user.id, data, { upsert: true, setDefaultsOnInsert: true });
-
-
 };

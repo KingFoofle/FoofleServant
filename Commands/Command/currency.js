@@ -11,24 +11,10 @@ module.exports.execute = async (client, message) => {
 
 	// Find the target in the Database
 	const foundUser = await userDB.findById(target.id);
-	let reply;
+	const reply = foundUser ?
+		`${target.username}'s balance: ${foundUser.currency}` :
+		`${target.username} is not registered!`;
 
-	if (foundUser) {
-		let balance;
-		if (foundUser.currency) {balance = foundUser.currency;}
-
-		else {
-			balance = 0;
-			client.logger.warn(`${target.username} does not have a currency field!`);
-		}
-
-		reply = `${target.username}'s balance: ${balance}`;
-
-	}
-
-	else {
-		reply = `${target.username} is not registered!`;
-		client.logger.warn(reply);
-	}
+	if (foundUser) {client.logger.warn(reply);}
 	message.reply(reply);
 };

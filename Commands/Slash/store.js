@@ -53,7 +53,7 @@ exports.execute = async (client, interaction) => {
 		client: client,
 
 		// The Channel to send the Store Embed to
-		channel: interaction.channel,
+		interaction: interaction,
 
 		// The user who will be able to use this store
 		member: interaction.member,
@@ -73,6 +73,4 @@ exports.execute = async (client, interaction) => {
 		// How many products per page are there
 		productsPerPage: PRODUCTS_PER_PAGE,
 	});
-
-	interaction.reply('Store Sent!');
 };

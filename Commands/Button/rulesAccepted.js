@@ -14,13 +14,6 @@ module.exports.execute = async (client, interaction) => {
 	const data = { _id: member.id, username:username },
 		foundUser = await userDB.findByIdAndUpdate(member.id, data, { upsert:true, setDefaultsOnInsert: true });
 
-	if (foundUser) {
-		logger.warn(`${username} is already registered.`);
-	}
-
-	else {
-		logger.success(`${username} has been registered.`);
-	}
-
-
+	if (foundUser) {logger.warn(`${username} is already registered.`);}
+	else {logger.success(`${username} has been registered.`);}
 };

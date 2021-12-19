@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { MessageActionRow, MessageButton } = require('discord.js');
 
 // TODO: Improve. Wtf is even this
 // Replace all \n with [newline]. Reason for this is because '.' in regex matches everything except [] :D
@@ -13,7 +13,7 @@ module.exports = class StoreMenu {
 
 	constructor(opts = {}) {
 		const {
-			channel,
+			interaction,
 			client,
 			member,
 			reactions = { up: '🔼', down: '🔽', back: '◀️', next: '▶️', select: '⏺️' },
@@ -26,7 +26,8 @@ module.exports = class StoreMenu {
 		} = opts;
 
 		this.client = client;
-		this.channel = channel;
+		this.interaction = interaction;
+		this.channel = interaction.channel;
 		this.member = member;
 		this.productsPerPage = productsPerPage;
 
@@ -53,7 +54,7 @@ module.exports = class StoreMenu {
 
 
 		// Send the embed
-		channel.send({ embeds: [this.getCurrentPage()] }).then(msg => {
+		this.channel.send({ embeds: [this.getCurrentPage()] }).then(msg => {
 			this.msg = msg;
 			this.select(page);
 			this.addReactions();
@@ -156,7 +157,7 @@ module.exports = class StoreMenu {
 						});
 
 					// Create the Confirmation Embed
-					const embedConfirmationMessage = new MessageEmbed()
+					const embedConfirmationMessage = this.client.tools.createEmbed()
 							.setTitle('Confirmation')
 							.addField(`Would you like to purchase: *${product._id}*?`,
 								`__Name__: _${product._id}_\n` +

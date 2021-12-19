@@ -16,9 +16,7 @@ exports.execute = async (client, interaction) => {
 
 	let message;
 
-	if (amount < 1) {
-		message = 'You need to input a number higher than 0.';
-	}
+	if (amount < 1) {message = 'You need to input a number higher than 0.';}
 	else {
 		try {
 			const deletedMessages = await interaction.channel.bulkDelete(amount, true);
@@ -32,6 +30,7 @@ exports.execute = async (client, interaction) => {
 	}
 
 	interaction.reply({
-		content: message, ephemeral:true,
+		content: message,
+		ephemeral:true,
 	});
 };

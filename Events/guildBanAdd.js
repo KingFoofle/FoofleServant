@@ -7,7 +7,5 @@ module.exports = async (client, ban) => {
 		const user = await userDB.findByIdAndRemove(ban.user.id);
 		logger.log(`Removed ${user.username} from MongoDB.`);
 	}
-	catch (err) {
-		logger.error(err);
-	}
+	catch (err) {logger.error(err);}
 };

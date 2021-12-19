@@ -1,11 +1,5 @@
 const { MessageEmbed } = require('discord.js');
 
-function buildEmbed(title, fields) {
-	return createEmbed()
-		.setTitle(title)
-		.addFields(fields);
-}
-
 /**
  * Constructs a Leaderboard Embed Message.
  * @param {Object} args
@@ -30,7 +24,7 @@ exports.buildLeaderBoard = async function({ database, filter, title, subtitle })
 		values = values.concat(`${user.currency}\n`);
 	}
 
-	return buildEmbed(title, [
+	return createEmbed().setTitle(title).addFields([
 		{ name: `_Top ${users.length}_`, value: names, inline:true },
 		{ name: '\u200B', value: divisor, inline:true },
 		{ name:subtitle, value: values, inline:true },
@@ -133,13 +127,6 @@ exports.secondsToTime = function(s) {
  */
 const createEmbed = exports.createEmbed = function() {
 	return new MessageEmbed().setColor(process.env.EMBED_COLOR);
-};
-
-// TODO: Update this. client.config doesn't exist, and I'm sure message.client is a thing
-exports.logToAdminChannel = (client, message) => {
-	// Maybe use a constant time zone?
-	message = `*${new Date().toLocaleString()}:*\n${message}`;
-	client.channels.cache.get(client.config.logChannelId).send(message);
 };
 
 // Constants

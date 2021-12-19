@@ -26,28 +26,21 @@ exports.execute = async (client, interaction) => {
 	let success;
 
 	// No transfering to yourself!
-	if (member.id === target.id) {
-		reason = 'You cannot transfer to yourself';
-	}
+	if (member.id === target.id) {reason = 'You cannot transfer to yourself';}
 
 	else {
 		try {
 		// Grab the user from the database
 			member.dbUser = await userDb.findById(member.id);
 			target.dbUser = await userDb.findById(target.id);
-			if (!target.dbUser) {
-				reason = 'Target is not registered.';
-			}
+			if (!target.dbUser) {reason = 'Target is not registered.';}
 
 			else if (member.dbUser) {
-				if (member.dbUser.currency >= amount) {
+				if (member.dbUser.currency < amount) {reason = 'Insufficient funds.';}
+				else {
 					await userDb.findByIdAndUpdate(member.id, { $inc: { currency: -amount } });
 					await userDb.findByIdAndUpdate(target.id, { $inc: { currency: amount } });
 					success = true;
-				}
-
-				else {
-					reason = 'Insufficient funds.';
 				}
 			}
 

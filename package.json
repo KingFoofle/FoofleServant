@@ -25,6 +25,7 @@
     "@discordjs/opus": "^0.5.3",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.7.5",
+    "async.util.restparam": "^0.5.2",
     "chalk": "^4.1.2",
     "discord-api-types": "^0.24.0",
     "discord.js": "^13.3.1",
