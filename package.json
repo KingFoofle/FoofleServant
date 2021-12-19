@@ -4,8 +4,10 @@
   "description": "KingFoofle's personal Discord Bot",
   "main": "index.js",
   "scripts": {
-    "deployAndStart": "npm run deploy && npm run start",
-    "deploy" : "node deploy-commands.js",
+    "deployAndStart": "npm run deployCommands && npm run start",
+    "deployCommands": "node deploy-commands.js",
+    "updateStore": "node update-store.js",
+
     "test": "echo \"Error: No Tests Present\" && exit 1",
     "start": "node index.js"
   },

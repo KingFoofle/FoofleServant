@@ -40,6 +40,10 @@ const client = new Client({
 			- GUILD_BAN_REMOVE				[]
 		*/
 		Intents.FLAGS.GUILD_BANS,
+
+		Intents.FLAGS.GUILD_VOICE_STATES,
+
+		Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
 	],
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });

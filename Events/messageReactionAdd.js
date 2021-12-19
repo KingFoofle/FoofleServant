@@ -1,6 +1,8 @@
 module.exports = async (client, reaction, user) => {
 	const { logger } = client;
 	const { message, emoji } = reaction;
+
+	if (user.bot) return;
 	if (reaction.partial) {
 		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
 		try {

@@ -1,5 +1,15 @@
 const { MessageEmbed } = require('discord.js');
 
+function createEmbed() {
+	return new MessageEmbed()
+		.setColor(process.env.EMBED_COLOR);
+}
+
+function buildEmbed(title, fields) {
+	return createEmbed()
+		.setTitle(title)
+		.addFields(fields);
+}
 
 /**
  * Constructs a Leaderboard Embed Message.
@@ -68,6 +78,9 @@ exports.commandTypes = {
 	SLASH: 'Slash',
 	COMMAND: 'Command',
 	BUTTON: 'Button',
+	VOICE: 'Voice',
+	ADMIN: 'Admin',
+	PRODUCT: 'Product',
 };
 
 exports.emojiToRoleName = {
