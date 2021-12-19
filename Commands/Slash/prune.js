@@ -1,4 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('@discordjs/builders'),
+	{ Permissions } = require('discord.js');
 
 exports.data = new SlashCommandBuilder()
 	.setName('prune')
@@ -15,8 +16,11 @@ exports.execute = async (client, interaction) => {
 		{ logger } = client;
 
 	let message;
+	if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+		message = 'You cannot use this command!\nReason: Insufficient Permissions';
+	}
 
-	if (amount < 1) {message = 'You need to input a number higher than 0.';}
+	else if (amount < 1) {message = 'You need to input a number higher than 0.';}
 	else {
 		try {
 			const deletedMessages = await interaction.channel.bulkDelete(amount, true);

@@ -9,30 +9,33 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 	let reason;
 
 	banReason = banReason ? banReason.join(' ') : 'No Reason Provided.';
-	if (!target) {reason = 'No User Mentioned!';}
+	if (!target || !target.id) {reason = 'No User Mentioned!';}
 
-	else if (member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
-		if (target.id === member.id) {reason = 'You cannot ban yourself.';}
-		// you cannot ban admins
-		else if (target.bannable && !(target.permissions.has(Permissions.FLAGS.BAN_MEMBERS))) {
+	else if (target.id === member.id) {reason = 'You cannot ban yourself.';}
+	// you cannot ban admins
+	else if (target.bannable) {
 
-			try {
-				// Ban and delete 7 days worth of replys
-				bannedUser = await target.ban({ days: 7, reason: banReason });
-			}
-
-			catch (err) {
-				logger.error(err);
-				reason = 'Error';
-			}
+		try {
+			// Ban and delete 7 days worth of replys
+			bannedUser = await target.ban({ days: 7, reason: banReason });
 		}
-		else {reason = 'Unbannable';}
+
+		catch (err) {
+			logger.error(err);
+			reason = 'Error';
+		}
 	}
-	else { reason = 'Insufficient Permissions';}
+	else {reason = 'Unbannable';}
 
 	const reply = bannedUser ?
 		`You banned ${target.user.username}.\nReason: ${banReason}` :
 		`Ban unsuccessful.\nReason: ${reason}`;
 
 	return message.reply(reply);
+};
+
+exports.canBeUsedBy = (client, member) => {
+	if (!member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
+		return { reason: 'Insufficient Permissions' };
+	}
 };

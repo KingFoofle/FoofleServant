@@ -480,8 +480,9 @@ exports.remove = function(index, numberToRemove) {
 
 exports.queue = function() {
 	const { client, videos } = information;
-	const queueEmbed = client.tools.buildQueue(videos)
-		.addField('Total Time', `${getTime(videos)}`);
+	if (videos.length) {
+		return client.tools.buildQueue(videos)
+			.addField('Total Time', `${getTime(videos)}`);
+	}
 
-	if (videos.length) {return queueEmbed;}
 };

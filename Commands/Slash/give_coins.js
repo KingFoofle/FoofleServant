@@ -46,7 +46,7 @@ exports.execute = async (client, interaction) => {
 
 			else {
 				reason = 'You might not be registered. Please contact KingFoofle.';
-				logger.warn(`${member.user.username} might not have a currency!`);
+				logger.warn(`${member.user.username} might not be registered!`);
 			}
 		}
 

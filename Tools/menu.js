@@ -10,13 +10,11 @@ const replace_nth = function(str, n) {
 };
 
 module.exports = class StoreMenu {
-
 	constructor(opts = {}) {
 		const {
 			interaction,
 			client,
-			member,
-			reactions = { up: '🔼', down: '🔽', back: '◀️', next: '▶️', select: '⏺️' },
+			reactions = { up: '🔼', down: '🔽', back: '◀️', next: '▶️', select: '⏺️', stop: '❌' },
 			pages = [],
 			page = 0,
 			time = 120000,
@@ -25,10 +23,11 @@ module.exports = class StoreMenu {
 			productsPerPage,
 		} = opts;
 
+		// Assigning Values
 		this.client = client;
 		this.interaction = interaction;
 		this.channel = interaction.channel;
-		this.member = member;
+		this.member = interaction.member;
 		this.productsPerPage = productsPerPage;
 
 		// The array of Embeds
@@ -52,13 +51,28 @@ module.exports = class StoreMenu {
 		// How errors should be handled
 		this.catch = customCatch;
 
+		// The message to reply to the initial interaction with
+		const message =
+		(this.reactions.up ? `${this.reactions.up}: Move your selection up\n` : '') +
+		(this.reactions.down ? `${this.reactions.down}: Move your selection down\n` : '') +
+		(this.reactions.select ? `${this.reactions.select}: Confirm your selection\n` : '') +
+		(this.reactions.back ? `${this.reactions.back}: Move a page back\n` : '') +
+		(this.reactions.next ? `${this.reactions.next}: Move a page forward\n` : '') +
+		(this.reactions.stop ? `${this.reactions.stop}: Close the Foof Store\n` : '\nYou can close the Foof Store by not reacting for a minute');
+
+		// Create and Send the embed
+		const storeEmbed = this.client.tools.createEmbed()
+			.setTitle('Welcome to the Foof Store')
+			.addField('Guide', message);
+		this.interaction.reply({ embeds: [storeEmbed], ephemeral:true });
+
 
 		// Send the embed
 		this.channel.send({ embeds: [this.getCurrentPage()] }).then(msg => {
 			this.msg = msg;
 			this.select(page);
 			this.addReactions();
-			this.createCollector(member.id);
+			this.createCollector(this.member.id);
 		}).catch(customCatch);
 	}
 
@@ -97,7 +111,7 @@ module.exports = class StoreMenu {
 
 	createCollector(uid) {
 		// Create the reaction collector
-		const collector = this.msg.createReactionCollector({ filter: (r, u) => u.id == uid, time: this.time });
+		const collector = this.msg.createReactionCollector({ filter: (r, u) => u.id == uid, idle: this.time });
 		this.collector = collector;
 
 		// Assign all of the collector events
@@ -130,12 +144,15 @@ module.exports = class StoreMenu {
 				// Obtain the chosen Product
 				const productNumber = this.page * this.productsPerPage + this.currentSelection,
 					product = this.products.at(productNumber);
+
 				if (product) {
 					// Create the button collector
 					this.channel.createMessageComponentCollector({
 
 						// Filter by button name, and user id
-						filter: i => i.customId === 'confirm' && i.user.id === uid,
+						filter: i =>
+							(i.customId === 'confirm' || i.customId === 'no') &&
+							i.user.id === uid,
 
 						// Only collect buttons
 						componentType: 'BUTTON',
@@ -148,12 +165,32 @@ module.exports = class StoreMenu {
 					})
 
 					// Assign Button Events
-						.on('collect', (i) => {
-							this.client.emit('onPurchase', i, product);
+						.on('collect', async (i) => {
+							// * The 'onPurchase' event should reply to the interaction *
+							if (i.customId === 'confirm') {this.client.emit('onPurchase', i, product);}
+							else {
+								// Create an embed to reply to the interaction with
+								const embed = this.client.tools.createEmbed()
+									.addField('Purchase Cancelled', 'You have not been charged.');
+
+								// Reply to the user.
+								i.reply({ embeds: [embed], ephemeral:true });
+							}
+
+							// Confirmation embed is deleted in the 'end' event
 						})
-						.on('end', (collected) => {
+						.on('end', async (collected) => {
 							// They did not confirm
-							if (!collected.size) {this.channel.send(`<@${uid}>: No confirmation given.`);}
+							if (!collected.size) {
+								const embed = this.client.tools.createEmbed()
+									.addField('Purchase Cancelled', 'No confirmation given.');
+
+								// Update the embed and remove the buttons
+								this.confirmMsg.edit({ embeds:[embed], components:[] });
+							}
+
+							// Delete the message. They confirmed
+							else {this.confirmMsg.delete();}
 						});
 
 					// Create the Confirmation Embed
@@ -171,14 +208,20 @@ module.exports = class StoreMenu {
 								new MessageButton()
 									.setCustomId('confirm')
 									.setLabel('Yes. I would like to buy it')
-									.setStyle('SUCCESS'),
+									.setStyle('SUCCESS'))
+
+							.addComponents(
+								new MessageButton()
+									.setCustomId('no')
+									.setLabel('On second thought...')
+									.setStyle('DANGER'),
 							);
 
 					// Send the message to the channel
 					this.channel.send({
 						embeds: [embedConfirmationMessage],
 						components: [row],
-					});
+					}).then((msg) => this.confirmMsg = msg);
 				}
 			}
 			// ❌
@@ -188,8 +231,8 @@ module.exports = class StoreMenu {
 			r.users.remove(uid).catch(this.catch);
 		})
 			.on('end', () => {
-				// Remove all of the reactions
-				this.msg.reactions.removeAll().catch(this.catch);
+				// Delete the message
+				this.msg.delete().catch(this.catch);
 			});
 	}
 	async addReactions() {

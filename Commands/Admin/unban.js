@@ -11,20 +11,14 @@ module.exports.execute = async (client, message, id, ...reason) => {
 	reason = reason ? reason.join(' ') : 'No Reason Provided';
 	if (!id) {reason = 'No ID Provided!';}
 
-	if (Permissions.FLAGS.BAN_MEMBERS) {
-		try {
-			unbannedUser = await guild.members.unban(id, reason);
-			logger.event(`${member.user.username} unbanned ${unbannedUser.username}`);
-		}
-
-		catch (err) {
-			failReason = 'An Error occurred.';
-			logger.error(err);
-		}
+	try {
+		unbannedUser = await guild.members.unban(id, reason);
+		logger.event(`${member.user.username} unbanned ${unbannedUser.username}`);
 	}
 
-	else {
-		failReason = 'Insufficient Permissions.';
+	catch (err) {
+		failReason = 'An Error occurred.';
+		logger.error(err);
 	}
 
 	const reply = unbannedUser ?
@@ -33,4 +27,10 @@ module.exports.execute = async (client, message, id, ...reason) => {
 
 
 	return message.reply(reply);
+};
+
+exports.canBeUsedBy = (client, member) => {
+	if (!member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
+		return { reason: 'Insufficient Permissions' };
+	}
 };

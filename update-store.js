@@ -21,7 +21,7 @@ async function update() {
 		// ! The execute() method that should be ran when the user purchases
 		// ! the product should go in that file
 		fs.appendFile(`./Commands/Product/${product._id}.js`,
-			'module.exports = async (client, interaction, product) => {const {member} = interaction}',
+			'module.exports.execute = async (client, interaction, product) => {\nconst {member} = interaction\n}',
 			function(err) {if (err) throw err;});
 	}
 
