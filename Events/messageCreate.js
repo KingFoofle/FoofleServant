@@ -46,8 +46,7 @@ module.exports = async (client, message) => {
 			else {
 				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);
 				// ...args means we unpack the array as parameters
-				command.execute(client, message, ...args)
-					.catch(logger.error);
+				command.execute(client, message, ...args).catch(logger.error);
 			}
 		}
 	}
