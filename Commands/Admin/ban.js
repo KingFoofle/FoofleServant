@@ -1,6 +1,13 @@
 const { Permissions } = require('discord.js');
 
-module.exports.execute = async (client, message, mention, ...banReason) => {
+/**
+ * Ban a user from the Server
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').Message} message The message that triggered the command
+ * @param  {String} mention The string formatted version of the mention
+ * @param {...String} banReason The reason for banning the user
+ */
+exports.execute = async (client, message, mention, ...banReason) => {
 	const target = message.mentions.members.first(),
 		{ member } = message,
 		{ logger } = client;
@@ -8,7 +15,7 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 	let bannedUser;
 	let reason;
 
-	banReason = banReason ? banReason.join(' ') : 'No Reason Provided.';
+	if (!banReason) banReason = ['No Reason Provided'];
 	if (!target || !target.id) {reason = 'No User Mentioned!';}
 
 	else if (target.id === member.id) {reason = 'You cannot ban yourself.';}
@@ -34,8 +41,15 @@ module.exports.execute = async (client, message, mention, ...banReason) => {
 	return message.reply(reply);
 };
 
+/**
+ * Define the restrictions of who can use this command
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').GuildMember} member The member to check against the restrictions
+ * @returns {void | string} `reason` explaining why the member cannot use this command. `void` otherwise
+ */
 exports.canBeUsedBy = (client, member) => {
+	// Only Members who can ban
 	if (!member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
-		return { reason: 'Insufficient Permissions' };
+		return 'Insufficient Permissions';
 	}
 };

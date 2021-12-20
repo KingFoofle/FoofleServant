@@ -1,6 +1,11 @@
+/**
+ *
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param  {import('discord.js').Interaction)} interaction The interaction that occurred
+ */
 module.exports = async (client, interaction) => {
 	const { commands, logger } = client,
-		{ commandTypes } = client.tools;
+		{ commandTypes } = client.constants;
 
 	let command, commandList, logMessage, logType;
 

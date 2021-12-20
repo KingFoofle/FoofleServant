@@ -1,3 +1,8 @@
+/**
+* Emitted whenever a member is banned from a guild.
+* @param {import('discord.js').Client} client The Discord Client
+* @param {import('discord.js').GuildBan} ban The ban that occurred
+*/
 module.exports = async (client, ban) => {
 	const { userSchema: userDB } = client.database;
 	const { logger } = client;

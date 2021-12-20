@@ -1,14 +1,15 @@
-// Run this file EVERY TIME you want to update a slash command
+// * Run this file EVERY TIME you want to update a slash command
+
+require('dotenv').config();
 const fs = require('fs'),
 	{ REST } = require('@discordjs/rest'),
-	{ Routes } = require('discord-api-types/v9');
+	{ Routes } = require('discord-api-types/v9'),
 
-// Importing this allows you to access the environment variables of the running node process
-require('dotenv').config();
-const envVars = process.env;
+	// Importing this allows you to access the environment variables of the running node process
+	{ env:envVars } = process,
 
-const commands = [];
-const commandFiles = fs.readdirSync('./Commands/Slash').filter(file => file.endsWith('.js'));
+	commands = [],
+	commandFiles = fs.readdirSync('./Commands/Slash').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command = require(`./Commands/Slash/${file}`);

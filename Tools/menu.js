@@ -1,26 +1,17 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 
-// TODO: Improve. Wtf is even this
-// Replace all \n with [newline]. Reason for this is because '.' in regex matches everything except [] :D
-const replace_nth = function(str, n) {
-	// From the given string s, replace f with r of zero-based nth occurrence
-	return str.replace(/\n/g, '[newline]')
-		.replace(RegExp('^(?:.*?[[]]){' + n + '}'), x => x.replace(RegExp('[[]]$'), '[✓]'))
-		.replace(/\[newline\]/g, '\n');
-};
-
 module.exports = class StoreMenu {
 	constructor(opts = {}) {
 		const {
-			interaction,
 			client,
-			reactions = { up: '🔼', down: '🔽', back: '◀️', next: '▶️', select: '⏺️', stop: '❌' },
+			interaction,
+			productsPerPage,
 			pages = [],
+			products = [],
 			page = 0,
 			time = 120000,
+			reactions = { up: '🔼', down: '🔽', back: '◀️', next: '▶️', select: '⏺️', stop: '❌' },
 			customCatch = console.error,
-			products = [],
-			productsPerPage,
 		} = opts;
 
 		// Assigning Values
@@ -68,12 +59,13 @@ module.exports = class StoreMenu {
 
 
 		// Send the embed
-		this.channel.send({ embeds: [this.getCurrentPage()] }).then(msg => {
-			this.msg = msg;
-			this.select(page);
-			this.addReactions();
-			this.createCollector(this.member.id);
-		}).catch(customCatch);
+		this.channel.send({ embeds: [this.getCurrentPage()] })
+			.then(msg => {
+				this.msg = msg;
+				this.select(page);
+				this.addReactions();
+				this.createCollector(this.member.id);
+			}).catch(customCatch);
 	}
 
 	select(pg = 0) {
@@ -87,6 +79,14 @@ module.exports = class StoreMenu {
 
 	// Shift the [] or [✓] num spaces up or down
 	shift(num) {
+		// TODO: Improve. Wtf is even this
+		const replace_nth = function(str, n) {
+			// From the given string s, replace f with r of zero-based nth occurrence
+			// Replace all \n with [newline]. Reason for this is because '.' in regex matches everything except [] :D
+			return str.replace(/\n/g, '[newline]')
+				.replace(RegExp('^(?:.*?[[]]){' + n + '}'), x => x.replace(RegExp('[[]]$'), '[✓]'))
+				.replace(/\[newline\]/g, '\n');
+		};
 		this.currentSelection += num;
 
 		// Grab the current page
@@ -115,124 +115,118 @@ module.exports = class StoreMenu {
 		this.collector = collector;
 
 		// Assign all of the collector events
-		collector.on('collect', r => {
+		collector.on('end', () => {
+			// Delete the message
+			this.msg.delete().catch(this.catch);
+		})
+			.on('collect', r => {
 			// 🔼
-			if (r.emoji.name === this.reactions.up) {
-				if (this.currentSelection > 0) this.shift(-1);
-			}
+				if (r.emoji.name === this.reactions.up) {if (this.currentSelection > 0) this.shift(-1);}
 
-			// 🔽
-			else if (r.emoji.name === this.reactions.down) {
-				const index = this.page * this.productsPerPage,
-					productsOnPage = this.products.slice(index, index + this.productsPerPage).length;
+				// 🔽
+				else if (r.emoji.name === this.reactions.down) {
+					const index = this.page * this.productsPerPage,
+						productsOnPage = this.products.slice(index, index + this.productsPerPage).length;
 
-				if (this.currentSelection < productsOnPage) this.shift(1);
-			}
+					if (this.currentSelection < productsOnPage) this.shift(1);
+				}
 
-			// ◀️
-			else if (r.emoji.name === this.reactions.back) {
-				if (this.page != 0) this.select(this.page - 1);
-			}
+				// ◀️
+				else if (r.emoji.name === this.reactions.back) {if (this.page != 0) this.select(this.page - 1);}
 
-			// ▶️
-			else if (r.emoji.name === this.reactions.next) {
-				if (this.page < this.pages.length - 1) this.select(this.page + 1);
-			}
+				// ▶️
+				else if (r.emoji.name === this.reactions.next) {if (this.page < this.pages.length - 1) this.select(this.page + 1);}
 
-			// ⏺️
-			else if (r.emoji.name === this.reactions.select) {
+				// ⏺️
+				else if (r.emoji.name === this.reactions.select) {
 				// Obtain the chosen Product
-				const productNumber = this.page * this.productsPerPage + this.currentSelection,
-					product = this.products.at(productNumber);
+					const productNumber = this.page * this.productsPerPage + this.currentSelection,
+						product = this.products.at(productNumber);
 
-				if (product) {
+					if (product) {
 					// Create the button collector
-					this.channel.createMessageComponentCollector({
+						this.channel.createMessageComponentCollector({
 
-						// Filter by button name, and user id
-						filter: i =>
-							(i.customId === 'confirm' || i.customId === 'no') &&
+							// Filter by button name, and user id
+							filter: i =>
+								(i.customId === 'confirm' || i.customId === 'no') &&
 							i.user.id === uid,
 
-						// Only collect buttons
-						componentType: 'BUTTON',
+							// Only collect buttons
+							componentType: 'BUTTON',
 
-						// Only collect one Interaction
-						max: 1,
+							// Only collect one Interaction
+							max: 1,
 
-						// Wait 15 seconds
-						time: 15 * 1000,
-					})
+							// Wait 15 seconds
+							time: 15 * 1000,
+						})
 
-					// Assign Button Events
-						.on('collect', async (i) => {
+						// Assign Button Events
+							.on('collect', async (i) => {
 							// * The 'onPurchase' event should reply to the interaction *
-							if (i.customId === 'confirm') {this.client.emit('onPurchase', i, product);}
-							else {
+								if (i.customId === 'confirm') {this.client.emit('onPurchase', i, product);}
+								else {
 								// Create an embed to reply to the interaction with
-								const embed = this.client.tools.createEmbed()
-									.addField('Purchase Cancelled', 'You have not been charged.');
+									const embed = this.client.tools.createEmbed()
+										.addField('Purchase Cancelled', 'You have not been charged.');
 
-								// Reply to the user.
-								i.reply({ embeds: [embed], ephemeral:true });
-							}
+									// Reply to the user.
+									i.reply({ embeds: [embed], ephemeral:true });
+								}
 
 							// Confirmation embed is deleted in the 'end' event
-						})
-						.on('end', async (collected) => {
+							})
+							.on('end', async (collected) => {
 							// They did not confirm
-							if (!collected.size) {
-								const embed = this.client.tools.createEmbed()
-									.addField('Purchase Cancelled', 'No confirmation given.');
+								if (!collected.size) {
+									const embed = this.client.tools.createEmbed()
+										.addField('Purchase Cancelled', 'No confirmation given.');
 
-								// Update the embed and remove the buttons
-								this.confirmMsg.edit({ embeds:[embed], components:[] });
-							}
+									// Update the embed and remove the buttons
+									this.confirmMsg.edit({ embeds:[embed], components:[] });
+								}
 
-							// Delete the message. They confirmed
-							else {this.confirmMsg.delete();}
-						});
+								// Delete the message. They confirmed
+								else {this.confirmMsg.delete();}
+							});
 
-					// Create the Confirmation Embed
-					const embedConfirmationMessage = this.client.tools.createEmbed()
-							.setTitle('Confirmation')
-							.addField(`Would you like to purchase: *${product._id}*?`,
-								`__Name__: _${product._id}_\n` +
+						// Create the Confirmation Embed
+						const embedConfirmationMessage = this.client.tools.createEmbed()
+								.setTitle('Confirmation')
+								.addField(`Would you like to purchase: *${product._id}*?`,
+									`__Name__: _${product._id}_\n` +
 								`__Price__: ${product.price}\n` +
 								`__Description__: _${product.description}_`,
-							),
+								),
 
-						// Create the Message Button
-						row = new MessageActionRow()
-							.addComponents(
-								new MessageButton()
-									.setCustomId('confirm')
-									.setLabel('Yes. I would like to buy it')
-									.setStyle('SUCCESS'))
+							// Create the Message Button
+							row = new MessageActionRow()
+								.addComponents(
+									new MessageButton()
+										.setCustomId('confirm')
+										.setLabel('Yes. I would like to buy it')
+										.setStyle('SUCCESS'))
 
-							.addComponents(
-								new MessageButton()
-									.setCustomId('no')
-									.setLabel('On second thought...')
-									.setStyle('DANGER'),
-							);
+								.addComponents(
+									new MessageButton()
+										.setCustomId('no')
+										.setLabel('On second thought...')
+										.setStyle('DANGER'),
+								);
 
-					// Send the message to the channel
-					this.channel.send({
-						embeds: [embedConfirmationMessage],
-						components: [row],
-					}).then((msg) => this.confirmMsg = msg);
+						// Send the message to the channel
+						this.channel.send({
+							embeds: [embedConfirmationMessage],
+							components: [row],
+						}).then((msg) => this.confirmMsg = msg);
+					}
 				}
-			}
-			// ❌
-			else if (r.emoji.name == this.reactions.stop) {collector.stop();}
+				// ❌
+				else if (r.emoji.name == this.reactions.stop) {collector.stop();}
 
-			// Remove the reaction so the user can use it again
-			r.users.remove(uid).catch(this.catch);
-		})
-			.on('end', () => {
-				// Delete the message
-				this.msg.delete().catch(this.catch);
+				// Remove the reaction so the user can use it again
+				r.users.remove(uid).catch(this.catch);
 			});
 	}
 	async addReactions() {

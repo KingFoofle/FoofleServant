@@ -7,6 +7,11 @@ exports.data = new SlashCommandBuilder()
 	.setDescription('Opens the Interactive Store');
 
 
+/**
+ * Opens the Interactive Store
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').CommandInteraction} interaction The Slash Command Interaction triggered by the user
+ */
 exports.execute = async (client, interaction) => {
 	const { productSchema: storeDB } = client.database,
 

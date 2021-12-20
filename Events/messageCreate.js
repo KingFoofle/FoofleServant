@@ -1,14 +1,18 @@
-// TODO: ERROR RangeError [BITFIELD_INVALID]: Invalid bitfield flag or number: undefined.
-
+/**
+ * Emitted whenever a message is created.
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').Message} message The created message
+ */
 module.exports = async (client, message) => {
 	const { author: user, content } = message,
 		{ logger } = client,
 		{ userSchema:userDB } = client.database,
 		{ PREFIX } = client.env,
-		{ commandTypes, getMemberFromUserId } = client.tools,
+		{ userToMember } = client.tools,
+		{ commandTypes } = client.constants,
 
 		// Turn the User into a Member
-		member = await getMemberFromUserId(client, user.id);
+		member = await userToMember(user);
 
 	// Don't do anything with bot messages
 	if (user.bot) { return; }
@@ -37,11 +41,11 @@ module.exports = async (client, message) => {
 			// The command can be used if:
 			// - The file did not define its restrictions
 			// - The function did not return a reason why we can't use it
-			let result;
-			if (command.canBeUsedBy) result = command.canBeUsedBy(client, member);
+			let reason;
+			if (command.canBeUsedBy) reason = command.canBeUsedBy(client, member);
 
 			// Check if the member can use the command
-			if (result && result.reason) {message.reply(`You cannot use this command!\nReason: ${result.reason}`);}
+			if (reason) {message.reply(`You cannot use this command!\nReason: ${reason}`);}
 
 			else {
 				logger.cmd(`${user.tag} in #${message.channel.name} triggered a prefix command: ${commandName}`);

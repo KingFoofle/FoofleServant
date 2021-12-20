@@ -3,7 +3,7 @@
 module.exports = async (client, interaction, product) => {
 	const { userSchema:userDB } = client.database,
 		{ commands, logger } = client,
-		{ commandTypes } = client.tools,
+		{ commandTypes } = client.constants,
 		{ member } = interaction,
 		user = await userDB.findById(member.id),
 		command = commands.get(commandTypes.PRODUCT).get(product._id);

@@ -1,3 +1,8 @@
+/**
+ * Logic to run when the user presses the `rulesAccepted` button
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').ButtonInteraction} interaction The Button Interaction triggered by the user
+ */
 module.exports.execute = async (client, interaction) => {
 	const { giveRole } = client.tools,
 		{ userSchema } = client.database,
@@ -6,7 +11,7 @@ module.exports.execute = async (client, interaction) => {
 		{ username } = member.user;
 
 	// Give the Member role to whoever triggered the interaction
-	giveRole({ member:member, roleName:'Member' });
+	giveRole(member, 'Member');
 
 	// Register the User to MongoDB
 	logger.log(`Registering ${username} to MongoDB...`);

@@ -1,5 +1,5 @@
-const chalk = require('chalk');
-const moment = require('moment');
+const chalk = require('chalk'),
+	moment = require('moment');
 
 exports.log = (content, type = 'log') => {
 	const timestamp = `[${moment().format('DD-MM-YY H:m:s')}]`;
@@ -22,7 +22,6 @@ exports.log = (content, type = 'log') => {
 	case 'success': {
 		return console.log(`${timestamp} ${chalk.green(type.toUpperCase())} ${content}`);
 	}
-
 	case 'load': {
 		return console.log(`${timestamp} ${chalk.magenta(type.toUpperCase())} ${content} `);
 	}

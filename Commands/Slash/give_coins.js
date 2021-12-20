@@ -15,6 +15,11 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(true));
 
 
+/**
+ * Give a specified user FoofCoins
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').CommandInteraction} interaction The Slash Command Interaction triggered by the user
+ */
 exports.execute = async (client, interaction) => {
 	const target = interaction.options.getMember('target'),
 		amount = interaction.options.getInteger('amount'),

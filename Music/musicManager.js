@@ -112,6 +112,48 @@ function onIdle() {
 
 /**
  *
+ * @param {Array} videos
+ */
+const buildQueue = function(videos) {
+	let names = '', values = '', divisor = '';
+	const videoCount = videos.length - 11 < 0 ? 0 : videos.length - 11;
+	const { client } = information;
+
+	// Build each column
+	let i = 1;
+	videos.slice(1, 11).forEach(video => {
+		names = names.concat(`${i++}) ${video.title}\n`);
+		divisor = divisor.concat('|\n');
+		values = values.concat(`${video.duration}\n`);
+	});
+
+	// Build the Embed, and include the current song
+	const embed = client.tools.createEmbed()
+		.setTitle('Queue')
+		.addFields([
+			{ name:'Current Song', value:`${videos[0].title}`, inline:true },
+			{ name: '\u200B', value: '|', inline:true },
+			{ name: 'Duration', value:videos[0].duration, inline:true },
+		]);
+
+	// Add the songs in the queue, if present
+	if (names) {
+		embed.addFields([
+			{ name:'\u200B', value: '\u200B' },
+			{ name: 'Song Title', value: names, inline:true },
+			{ name: '\u200B', value: divisor, inline:true },
+			{ name: 'Duration', value: values, inline:true },
+		]);
+	}
+
+	// Include songs that aren't listed
+	if (videoCount) {embed.setFooter(`And ${videoCount} more songs...`);}
+	return embed;
+
+};
+
+/**
+ *
  * @param {VoiceConnection | AudioPlayer} object The object to assign events to
  * @param {VoiceConnectionStatus | AudioPlayerStatus} enumV The possible status for the object
  * @param {Object} events An object connecting Status to Event Callback
@@ -479,9 +521,9 @@ exports.remove = function(index, numberToRemove) {
 };
 
 exports.queue = function() {
-	const { client, videos } = information;
+	const { videos } = information;
 	if (videos.length) {
-		return client.tools.buildQueue(videos)
+		return buildQueue(videos)
 			.addField('Total Time', `${getTime(videos)}`);
 	}
 

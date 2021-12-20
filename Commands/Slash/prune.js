@@ -11,6 +11,11 @@ exports.data = new SlashCommandBuilder()
 			.setRequired(true),
 	);
 
+/**
+ * Prune a specified number of 14 day-old messages
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').CommandInteraction} interaction The Slash Command Interaction triggered by the user
+ */
 exports.execute = async (client, interaction) => {
 	const amount = interaction.options.getInteger('amount'),
 		{ logger } = client;

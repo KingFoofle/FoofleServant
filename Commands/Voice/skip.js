@@ -1,9 +1,19 @@
-module.exports.execute = async (client) => {
+/**
+ * Skip the currently playing song
+ * @param {import('discord.js').Client} client The Discord Client
+ */
+exports.execute = async (client) => {
 	client.music.skip();
 };
 
+/**
+ * Define the restrictions of who can use this command
+ * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').GuildMember} member The member to check against the restrictions
+ * @returns {void | string} `reason` explaining why the member cannot use this command. `void` otherwise
+ */
 exports.canBeUsedBy = (client, member) => {
-	if (!client.tools.voiceVerification(member)) {
-		return { reason: 'Not Connected to a Voice Channel!' };
+	if (!client.tools.isConnectedToVoiceChannel(member)) {
+		return 'Not Connected to a Voice Channel!';
 	}
 };
