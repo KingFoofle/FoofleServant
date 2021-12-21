@@ -6,7 +6,6 @@ exports.commandTypes = {
 	COMMAND: 'Command',
 	BUTTON: 'Button',
 	VOICE: 'Voice',
-	ADMIN: 'Admin',
 	PRODUCT: 'Product',
 };
 

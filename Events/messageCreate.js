@@ -25,7 +25,7 @@ module.exports = async (client, message) => {
 
 			// Shift() removes and returns the 0th index of an array
 			commandName = args.shift(),
-			acceptedCommandTypes = [commandTypes.COMMAND, commandTypes.ADMIN, commandTypes.VOICE];
+			acceptedCommandTypes = [commandTypes.COMMAND, commandTypes.VOICE];
 
 		// Search for a valid command
 		let command;
