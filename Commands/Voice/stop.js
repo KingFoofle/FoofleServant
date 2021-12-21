@@ -1,9 +1,11 @@
 /**
  * Empties the queue and sets the bot's AudioPlayer to Idle
  * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').Message} message The message that triggered the command
+
  */
-exports.execute = async (client) => {
-	client.music.stop();
+exports.execute = async (client, message) => {
+	client.player.getQueue(message.guildId).stop();
 };
 
 /**

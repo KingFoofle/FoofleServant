@@ -1,11 +1,12 @@
 /**
- * Skip the currently playing song
- * @param {import('discord.js').Client} client The Discord Client
+ *
+ * @param {import('discord.js').Client)} client The Discord Client
  * @param {import('discord.js').Message} message The message that triggered the command
-
+ * @param  {...any} otherArgs The arguments passed in by the user
  */
-exports.execute = async (client, message) => {
-	client.player.getQueue(message.guildId).skip();
+exports.execute = async (client, message, volume) => {
+	const vol = parseInt(volume);
+	if (vol) {client.player.getQueue(message.guildId).setVolume(vol);}
 };
 
 /**

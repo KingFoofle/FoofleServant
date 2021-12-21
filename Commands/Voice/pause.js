@@ -1,9 +1,10 @@
 /**
  * Pause the Bot's AudioPlayer
  * @param {import('discord.js').Client} client The Discord Client
+ * @param {import('discord.js').Message} message The message that triggered the command
  */
-exports.execute = async (client) => {
-	client.music.pause();
+exports.execute = async (client, message) => {
+	client.player.getQueue(message.guildId).setPaused(true);
 };
 
 /**

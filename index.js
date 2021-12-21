@@ -7,7 +7,6 @@ const { Client, Collection, Intents } = require('discord.js'),
 	util = require('util'),
 	readdir = util.promisify(fs.readdir),
 
-
 	// Mongoose Setup
 	mongoose = require('mongoose'),
 
@@ -61,6 +60,7 @@ const { Client, Collection, Intents } = require('discord.js'),
 		partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 	});
 
+
 // Adding to the Client
 client.env = process.env;
 client.commands = new Collection();
@@ -69,7 +69,9 @@ client.tools = require('./Tools/tools.js');
 client.constants = require('./Tools/constants.js');
 client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
-client.music = require('./Music/musicManager.js');
+client.formatter = require('@discordjs/builders');
+client.player = require('./Tools/player.js').getPlayer(client);
+
 
 async function init() {
 	const { logger, env } = client,

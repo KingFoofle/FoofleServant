@@ -62,7 +62,7 @@ const updateLeaderBoards = async function(client) {
  * @param {import('discord.js').Client} client The Discord Client
  */
 module.exports = async (client) => {
-	const { env, music, user, logger, tools } = client;
+	const { env, user, logger, tools } = client;
 	let status, activity, type;
 	if (env.PRODUCTION_MODE) {
 		status = 'dnd';
@@ -76,7 +76,6 @@ module.exports = async (client) => {
 	}
 
 	// Initializing the tools
-	music.init(client);
 	tools.init(client);
 
 	user.setPresence({ activities: [{ name: activity, type:type }], status: status });

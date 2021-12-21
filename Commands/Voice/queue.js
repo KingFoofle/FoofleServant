@@ -4,9 +4,36 @@
  * @param {import('discord.js').Message} message The message that triggered the command
  */
 exports.execute = async (client, message) => {
-	const queueEmbed = client.music.queue();
-	if (queueEmbed) {return message.reply({ embeds: [queueEmbed] });}
-	return message.reply('No songs in the Queue');
+	const { formatter } = client;
+
+	/** @type {import('discord-music-player').Queue} */
+	const queue = client.player.getQueue(message.guildId);
+	const firstSong = queue.songs.at(0);
+
+	if (!firstSong) return message.reply('No songs in the Queue');
+
+	// Build the embed values
+	let content = '', duration = '', i = 1;
+	queue.songs.slice(1, 11).forEach(song => {
+		content += `${i++}) ` + formatter.italic(song.name) + '\n';
+		duration += song.duration + '\n';
+	});
+
+	const queueEmbed = client.tools.createEmbed()
+		.setTitle('Queue')
+		.addField('Currently Playing', formatter.italic(firstSong.name), true)
+		.addField('Duration', queue.createProgressBar().times, true)
+		.addField('\u200B', '\u200B');
+
+	if (content) {
+		queueEmbed.addFields([
+			{ name: 'Songs', value: content, inline: true },
+			{ name: 'Duration', value: duration, inline: true },
+		]);
+	}
+
+	return message.reply({ embeds: [queueEmbed] });
+
 };
 
 /**

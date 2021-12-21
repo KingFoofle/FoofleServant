@@ -5,29 +5,28 @@
  * @param {...String} otherArgs The other arguments passed in by the user
  */
 exports.execute = async (client, message, ...otherArgs) => {
-	const { member, channel:textChannel } = message,
-		{ music } = client,
-		{ voice: voiceState } = member;
+	/** @type {import('discord-music-player').Player} */
+	const player = client.player,
+		{ logger } = client,
 
-	let url, query;
-	const linkOrSearchQuery = otherArgs.join(' '),
-		{ channel: voiceChannel } = voiceState;
+		// Check if there was a queue beforehand
+		guildQueue = player.getQueue(message.guildId),
 
-	if (!linkOrSearchQuery) {return message.reply('No URL or SearchQuery was passed!');}
+		// Create or get the queue of the Guild
+		queue = player.createQueue(message.guildId);
 
+	// Assign the text channel to the queue
+	queue.data = { message: message };
 
-	// Determine if the argument is a youtube link or a query
-	if (music.validateURL(linkOrSearchQuery)) {url = linkOrSearchQuery;}
-	else {query = linkOrSearchQuery;}
+	// Create or get the Connection to the voice channel
+	await queue.join(message.member.voice.channel);
 
-	if (voiceChannel.joinable) {
-		const connectOptions = { textChannel: textChannel, voiceChannel: voiceChannel };
-		return music.play({ url: url, query: query }, connectOptions);
-	}
-
-	message.reply('I cannot join this voice channel!');
-
-
+	// Add the Song to the queue, passing in the arguments as a parameter
+	queue.play(otherArgs.join(' '))
+		.catch(err => {
+			logger.error(err);
+			if (!guildQueue) queue.stop();
+		});
 };
 
 /**
