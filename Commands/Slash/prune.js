@@ -18,28 +18,31 @@ exports.data = new SlashCommandBuilder()
  */
 exports.execute = async (client, interaction) => {
 	const amount = interaction.options.getInteger('amount'),
-		{ logger } = client;
+		{ logger, tools } = client,
+		embed = tools.createEmbed();
 
-	let message;
 	if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
-		message = 'You cannot use this command!\nReason: Insufficient Permissions';
+		embed.setTitle('You cannot use this command!')
+			.addField('Reason', 'Insufficient Permissions');
 	}
 
-	else if (amount < 1) {message = 'You need to input a number higher than 0.';}
+	else if (amount < 1) {
+		embed.addField('Pruning Failed', 'You need to input an amount larger than 0');
+	}
 	else {
 		try {
 			const deletedMessages = await interaction.channel.bulkDelete(amount, true);
-			message = `Successfully pruned \`${deletedMessages.size}\` messages.`;
+			embed.addField('Messages Deleted', `${deletedMessages.size}`);
 		}
 
 		catch (err) {
 			logger.error(err);
-			message = 'There was an error trying to prune messages in this channel!';
+			embed.addField('Error', err);
 		}
 	}
 
 	interaction.reply({
-		content: message,
+		embeds: [embed],
 		ephemeral:true,
 	});
 };

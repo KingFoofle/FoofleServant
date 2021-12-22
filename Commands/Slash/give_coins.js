@@ -23,7 +23,7 @@ exports.data = new SlashCommandBuilder()
 exports.execute = async (client, interaction) => {
 	const target = interaction.options.getMember('target'),
 		amount = interaction.options.getInteger('amount'),
-		{ logger } = client,
+		{ logger, tools } = client,
 		{ member } = interaction,
 		{ userSchema:userDb } = client.database;
 
@@ -61,9 +61,9 @@ exports.execute = async (client, interaction) => {
 		}
 	}
 
-	const message = success ?
-		`Transfered ${amount} to ${target.user.username}.` :
-		`Could not complete transaction.\nReason: ${reason}`;
+	const embed = tools.createEmbed();
+	if (success) {embed.addField('Transfer Success', `Transfered ${amount} to ${target.user.username}.`);}
+	else {embed.addField('Could not complete transaction', `Reason: ${reason}`);}
 
-	return interaction.reply({ content: message, ephemeral: true });
+	return interaction.reply({ embeds: [embed], ephemeral: true });
 };
