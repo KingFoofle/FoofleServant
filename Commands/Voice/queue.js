@@ -26,11 +26,11 @@ exports.execute = async (client, message) => {
 	const queueEmbed = client.tools.createEmbed()
 		.setTitle('Queue')
 		.addField('Currently Playing', formatter.italic(firstSong.name), true)
-		.addField('Duration', queue.createProgressBar().times, true)
-		.addField('\u200B', '\u200B');
+		.addField('Duration', queue.createProgressBar().times, true);
 
 	if (content) {
 		queueEmbed.addFields([
+			{ name: '\u200B', value: '\u200B' },
 			{ name: 'Songs', value: content, inline: true },
 			{ name: 'Duration', value: duration, inline: true },
 		]);

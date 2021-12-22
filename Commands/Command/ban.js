@@ -20,22 +20,21 @@ exports.run = async (client, message, mentionOrId, reason, type = 'ban') => {
 	let user, failReason;
 
 	if (!reason || !reason.trim()) reason = 'No Reason Provided';
-
-	if (!mentionOrId || !reason.trim()) {failReason = 'No User Mentioned!';}
-	else if (target.id === member.id) {failReason = 'You cannot ' + type + ' yourself.';}
+	if (!target && !mentionOrId) {failReason = 'No User Mentioned!';}
+	else if (mentionOrId === member.id || (target && target.id === member.id)) {failReason = 'You cannot ' + type + ' yourself.';}
 
 	else {
 		try {
 			if (ban) {
 				// Attempt to Ban
 				// Delete up to 7 days worth of messages
-				if (target.bannable) {user = await target.ban({ days:7, reason });}
+				if (target.bannable) {user = (await target.ban({ days:7, reason })).user;}
 				else { failReason = 'Unbannable';}
 			}
 
 			else if (kick) {
 				// Attempt to Kick
-				if (target.kickable) {user = await target.kick(reason);}
+				if (target.kickable) {user = (await target.kick(reason)).user;}
 				else {failReason = 'Unkickable';}
 			}
 
@@ -45,7 +44,7 @@ exports.run = async (client, message, mentionOrId, reason, type = 'ban') => {
 
 		catch (err) {
 			logger.error(err);
-			failReason = 'Error';
+			failReason = err.message;
 		}
 	}
 	const replyEmbed = tools.createEmbed()
