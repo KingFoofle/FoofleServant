@@ -1,4 +1,4 @@
-const { Permissions } = require('discord.js');
+const { run, canBeUsedBy } = require('./ban');
 
 /**
  * Unban a user from the Server
@@ -7,34 +7,8 @@ const { Permissions } = require('discord.js');
  * @param  {String} id The ID of the user to unban
  * @param {...String} reason The reason for unbanning the user
  */
-module.exports.execute = async (client, message, id, ...reason) => {
-	const { logger } = client,
-		{ guild, member } = message;
-
-	let unbannedUser,
-		failReason;
-
-	if (!reason) reason = ['No Reason Provided'];
-	if (!id) {failReason = 'No ID Provided!';}
-
-	else {
-		try {
-			unbannedUser = await guild.members.unban(id, reason.join(' '));
-			logger.event(`${member.user.username} unbanned ${unbannedUser.username}`);
-		}
-
-		catch (err) {
-			failReason = 'An Error occurred.';
-			logger.error(err);
-		}
-	}
-
-	const reply = unbannedUser ?
-		`You unbanned ${unbannedUser.username}\nReason: ${reason.join(' ')}` :
-		`Unbanning Failed.\nReason: ${failReason}`;
-
-
-	return message.reply(reply);
+exports.execute = async (client, message, id, ...reason) => {
+	run(client, message, id, reason.join(' '), 'unban');
 };
 
 /**
@@ -44,7 +18,5 @@ module.exports.execute = async (client, message, id, ...reason) => {
  * @returns {void | string} `reason` explaining why the member cannot use this command. `void` otherwise
  */
 exports.canBeUsedBy = (client, member) => {
-	if (!member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
-		return 'Insufficient Permissions' ;
-	}
+	return canBeUsedBy(client, member);
 };
