@@ -6,6 +6,7 @@ const { Client, Collection, Intents } = require('discord.js'),
 	fs = require('fs'),
 	util = require('util'),
 	readdir = util.promisify(fs.readdir),
+	{ Player } = require('discord-music-player'),
 
 	// Mongoose Setup
 	mongoose = require('mongoose'),
@@ -16,43 +17,11 @@ const { Client, Collection, Intents } = require('discord.js'),
 	 */
 	client = new Client({
 		intents: [
-		// [] = Unused, [x] = Used
-
-			// Gives the bot like, 80 events, but we need it to be able to access
-			// channel and message cache
 			Intents.FLAGS.GUILDS,
-
-			/* Gives the bot access to these events:
-				- MESSAGE_CREATE 									[x]
-				- MESSAGE_UPDATE 									[]
-				- MESSAGE_DELETE 									[]
-				- MESSAGE_DELETE_BULK 						[]
-			 */
 			Intents.FLAGS.GUILD_MESSAGES,
-
-			/* Gives the bot access to these events:
-				- MESSAGE_REACTION_ADD 						[x]
-				- MESSAGE_REACTION_REMOVE					[]
-				- MESSAGE_REACTION_REMOVE_ALL			[]
-				- MESSAGE_REACTION_REMOVE_EMOJI		[]
-			*/
 			Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-
-			/* Gives the bot access to these events:
-				- GUILD_BAN_ADD 									[x]
-				- GUILD_BAN_REMOVE								[]
-			*/
 			Intents.FLAGS.GUILD_BANS,
-
-			/* Gives the bot access to these events:
-				- VOICE_STATE_UPDATE							[]
-			*/
 			Intents.FLAGS.GUILD_VOICE_STATES,
-
-			/* Gives the bot access to these events:
-				  - GUILD_EMOJIS_UPDATE						[]
-  				- GUILD_STICKERS_UPDATE					[]
-			*/
 			Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
 		],
 
@@ -70,7 +39,6 @@ client.constants = require('./Tools/constants.js');
 client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
 client.formatter = require('@discordjs/builders');
-client.player = require('./Tools/player.js').getPlayer(client);
 
 
 async function init() {
@@ -88,12 +56,12 @@ async function init() {
 				.readdirSync(`./${directory}`)
 				.filter((file) => file.endsWith('.js'));
 
-			logger.load(`Loading ${directory}...`);
+			logger.load(`Loading Folder: ${directory}...`);
 
 			for (const file of files) {
 				const moduleExport = require(`./${directory}/${file}`);
 				const fileName = file.split('.')[0];
-				logger.load(`Attempting to Load: ${fileName}...`);
+				logger.load(`Loading File: ${fileName}...`);
 				data.set(fileName, moduleExport);
 			}
 
@@ -109,14 +77,63 @@ async function init() {
 	});
 
 	// Load events
-	const eventData = loadFiles('Events');
-	eventData.forEach((event, eventName) => {
+	loadFiles('Events/Client').forEach((event, eventName) => {
 		// Attach the event to the client
 		if (event.once) { client.once(eventName, event.bind(null, client)); }
 		else { client.on(eventName, event.bind(null, client)); }
 	});
 
 	console.log('===================');
+
+	// Create the Player
+	const player = new Player(client);
+
+	// Load Player Events and assign them to the player
+	loadFiles('Events/Player').forEach((event, eventName) => {
+		player.on(eventName, event.bind(null, client));
+	});
+
+	player.on('error', (error, queue) => {
+		logger.log(`Error: ${error}`);
+	});
+
+	// Play/Playlist function
+	player.run = async (message, functionToUse, searchOrLink) => {
+		// Check if there was a queue beforehand
+		const guildQueue = player.getQueue(message.guildId),
+
+			// Create or get the queue of the Guild
+			queue = player.createQueue(message.guildId, {
+			// Assign the text channel to the queue
+				data: { message },
+			});
+
+		// Create or get the Connection to the voice channel
+		await queue.join(message.member.voice.channel);
+
+		// Add the Song to the queue, passing in the arguments as a parameter
+		if (functionToUse === 'play') {
+			queue.play(searchOrLink)
+				.catch(err => {
+					logger.error(err);
+					if (!guildQueue) queue.stop();
+				});
+		}
+
+		else {
+			queue.playlist(searchOrLink)
+				.catch(err => {
+					logger.error(err);
+					if (!guildQueue) queue.stop();
+				});
+		}
+
+
+	};
+	console.log('===================');
+
+	// Assign the Player to the Discord Client
+	client.player = player;
 
 	// Let the database connect BEFORE we connect to Discord
 	logger.load('Connecting Mongoose...');
