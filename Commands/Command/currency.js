@@ -5,16 +5,25 @@
  */
 module.exports.execute = async (client, message) => {
 	const { author } = message,
+		{ createEmbed } = client.tools,
 		{ userSchema: userDB } = client.database,
 		member = message.mentions.members.first(),
 		// If no @ mention was included, use the author
-		target = !member ? author : member.user;
-
+		target = !member ? author : member.user,
+		embed = createEmbed();
 
 	// Find the target in the Database
-	userDB.findById(target.id)
-		.then((foundUser) => message.reply(`${target.username}'s balance: ${foundUser.currency}`))
-		.catch(() => message.reply(`No currency found for ${target.username}`));
+	try {
+		const user = await userDB.findById(target.id);
+		embed.addField(`${target.username}'s balance`, `${user.currency}`);
+	}
+
+	catch {
+		embed.addField('Error', `No currency found for ${target.username}`);
+	}
+
+	message.reply({ embeds: [embed] });
+
 };
 
 /**
