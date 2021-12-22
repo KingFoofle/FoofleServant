@@ -7,6 +7,8 @@
 exports.execute = async (client, message, index) => {
 	const num = parseInt(index);
 	if (num) {client.player.getQueue(message.guildId).remove(num);}
+
+	// TODO: Reply to the channel
 };
 
 /**

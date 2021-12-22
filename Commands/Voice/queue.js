@@ -8,9 +8,13 @@ exports.execute = async (client, message) => {
 
 	/** @type {import('discord-music-player').Queue} */
 	const queue = client.player.getQueue(message.guildId);
-	const firstSong = queue.songs.at(0);
 
+	// TODO: Check for queue
+
+	const firstSong = queue.songs.at(0);
 	if (!firstSong) return message.reply('No songs in the Queue');
+
+	const songsNotDisplayed = queue.songs.length - 11;
 
 	// Build the embed values
 	let content = '', duration = '', i = 1;
@@ -30,6 +34,10 @@ exports.execute = async (client, message) => {
 			{ name: 'Songs', value: content, inline: true },
 			{ name: 'Duration', value: duration, inline: true },
 		]);
+	}
+
+	if (songsNotDisplayed > 0) {
+		queueEmbed.setFooter(`and ${songsNotDisplayed} more songs...`);
 	}
 
 	return message.reply({ embeds: [queueEmbed] });

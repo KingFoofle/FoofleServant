@@ -1,11 +1,11 @@
 /**
- * Play a song
+ * Play a Playlist
  * @param {import('discord.js').Client} client The Discord Client
  * @param {import('discord.js').Message} message The message that triggered the command
  * @param {...String} otherArgs The other arguments passed in by the user
  */
 exports.execute = async (client, message, ...otherArgs) => {
-	client.player.run(message, 'play', otherArgs.join(' '));
+	client.player.run(message, 'playlist', otherArgs.join(' '));
 };
 
 /**
