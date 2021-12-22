@@ -5,7 +5,7 @@
  * @param {...String} otherArgs The other arguments passed in by the user
  */
 exports.execute = async (client, message, ...otherArgs) => {
-	client.player.run(message, 'playlist', otherArgs.join(' '));
+	require('./play.js').play(client, message, 'playlist', otherArgs.join(' '));
 };
 
 /**

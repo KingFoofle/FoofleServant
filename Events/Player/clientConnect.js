@@ -5,5 +5,11 @@
  * @param {import('discord.js').VoiceChannel} channel The Voice Channel that the bot connected to
  */
 module.exports = async (client, queue, channel) => {
+	const currentSong = queue.songs.at(0);
+	const embed = client.tools.createEmbed()
+		.setThumbnail(currentSong.thumbnail)
+		.addField('Now Playing', `*${currentSong.title}*`)
+		.addField('Duration', `${currentSong.duration}`);
 
+	queue.data.message.channel.send({ embeds: [embed] });
 };

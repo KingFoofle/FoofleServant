@@ -1,11 +1,53 @@
 /**
+ * The command for Play and Playlist to use
+ * @param {import('discord.js').Client} client
+ * @param {import('discord.js').Message} message
+ * @param {String} functionToUse
+ * @param {String} searchOrLink
+ */
+exports.play = async (client, message, functionToUse, searchOrLink) => {
+	const { player, logger } = client,
+		// Check if there was a queue beforehand
+		queuePresent = !!player.getQueue(message.guildId),
+
+		// Create or get the queue of the Guild
+		queue = player.createQueue(message.guildId, {
+		// Assign the text channel to the queue
+			data: { message },
+		});
+
+	// Create or get the Connection to the voice channel
+	await queue.join(message.member.voice.channel);
+
+	// Emit the clientConnect event
+	if (!queuePresent) {player.emit('clientConnect', queue, queue.connection.channel);}
+
+	// Add the Song to the queue, passing in the arguments as a parameter
+	if (functionToUse === 'play') {
+		queue.play(searchOrLink)
+			.catch(err => {
+				logger.error(err);
+				if (!queuePresent) queue.stop();
+			});
+	}
+
+	else {
+		queue.playlist(searchOrLink)
+			.catch(err => {
+				logger.error(err);
+				if (!queuePresent) queue.stop();
+			});
+	}
+};
+
+/**
  * Play a song
  * @param {import('discord.js').Client} client The Discord Client
  * @param {import('discord.js').Message} message The message that triggered the command
  * @param {...String} otherArgs The other arguments passed in by the user
  */
 exports.execute = async (client, message, ...otherArgs) => {
-	client.player.run(message, 'play', otherArgs.join(' '));
+	this.play(client, message, 'play', otherArgs.join(' '));
 };
 
 /**

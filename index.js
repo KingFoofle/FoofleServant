@@ -27,29 +27,27 @@ const { Client, Collection, Intents } = require('discord.js'),
 
 		// Partials this bot can receive
 		partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-	});
+	}).on('error', (err) => console.error(err));
 
 
 // Adding to the Client
 client.env = process.env;
 client.commands = new Collection();
-client.event = new Collection();
 client.tools = require('./Tools/tools.js');
 client.constants = require('./Tools/constants.js');
 client.logger = require('./Tools/logger.js');
 client.database = require('./Database/Mongoose.js');
 client.formatter = require('@discordjs/builders');
 
-
 async function init() {
 	const { logger, env } = client,
 
 		/**
-		*
+		* Load all files in a directory
 		* @param {String} directory The directory to traverse over
 		* @returns {Collection<String>} A Collection that maps the file name to its module export
 		*/
-		loadFiles = function(directory) {
+		loadFiles = (directory) => {
 			const data = new Collection();
 			// Load Files
 			const files = fs
@@ -68,7 +66,7 @@ async function init() {
 			return data;
 		};
 
-	// Load the commands
+	// * Load the commands
 	const commandFolders = await readdir('./Commands/');
 	commandFolders.forEach(type => {
 		const commandFiles = loadFiles('Commands/' + type);
@@ -76,9 +74,9 @@ async function init() {
 		console.log('===================');
 	});
 
-	// Load events
+	// * Load events
 	loadFiles('Events/Client').forEach((event, eventName) => {
-		// Attach the event to the client
+		// Attach the client to the event
 		if (event.once) { client.once(eventName, event.bind(null, client)); }
 		else { client.on(eventName, event.bind(null, client)); }
 	});
@@ -86,54 +84,21 @@ async function init() {
 	console.log('===================');
 
 	// Create the Player
-	const player = new Player(client);
+	const player = new Player(client)
+		.on('error', (error) => {
+			logger.error(`Error: ${error}`);
+		});
 
-	// Load Player Events and assign them to the player
+	// * Load Player Events and assign them to the player
 	loadFiles('Events/Player').forEach((event, eventName) => {
 		player.on(eventName, event.bind(null, client));
 	});
 
-	player.on('error', (error, queue) => {
-		logger.log(`Error: ${error}`);
-	});
-
-	// Play/Playlist function
-	player.run = async (message, functionToUse, searchOrLink) => {
-		// Check if there was a queue beforehand
-		const guildQueue = player.getQueue(message.guildId),
-
-			// Create or get the queue of the Guild
-			queue = player.createQueue(message.guildId, {
-			// Assign the text channel to the queue
-				data: { message },
-			});
-
-		// Create or get the Connection to the voice channel
-		await queue.join(message.member.voice.channel);
-
-		// Add the Song to the queue, passing in the arguments as a parameter
-		if (functionToUse === 'play') {
-			queue.play(searchOrLink)
-				.catch(err => {
-					logger.error(err);
-					if (!guildQueue) queue.stop();
-				});
-		}
-
-		else {
-			queue.playlist(searchOrLink)
-				.catch(err => {
-					logger.error(err);
-					if (!guildQueue) queue.stop();
-				});
-		}
-
-
-	};
-	console.log('===================');
 
 	// Assign the Player to the Discord Client
 	client.player = player;
+
+	console.log('===================');
 
 	// Let the database connect BEFORE we connect to Discord
 	logger.load('Connecting Mongoose...');
