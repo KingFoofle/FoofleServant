@@ -10,8 +10,8 @@ const { Permissions } = require('discord.js');
  * @returns
  */
 exports.run = async (client, message, mentionOrId, reason, type = 'ban') => {
-	const ban = type === 'ban',
-		kick = type === 'kick',
+	const ban = type.toLowerCase() === 'ban',
+		kick = type.toLowerCase() === 'kick',
 
 		target = message.mentions.members.first(),
 		{ member, guild } = message,
@@ -63,7 +63,7 @@ exports.run = async (client, message, mentionOrId, reason, type = 'ban') => {
  * @param {...String} banReason The reason for banning the user
  */
 exports.execute = async (client, message, mention, ...banReason) => {
-	this.run(client, message, mention, banReason.join(' '), 'ban');
+	this.run(client, message, mention, banReason.join(' '), 'Ban');
 };
 
 /**

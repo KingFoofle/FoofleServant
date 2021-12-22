@@ -8,7 +8,7 @@ const { run, canBeUsedBy } = require('./ban');
  * @param {...String} reason The reason for unbanning the user
  */
 exports.execute = async (client, message, id, ...reason) => {
-	run(client, message, id, reason.join(' '), 'unban');
+	run(client, message, id, reason.join(' '), 'Unban');
 };
 
 /**

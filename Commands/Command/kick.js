@@ -9,7 +9,7 @@ const { Permissions } = require('discord.js'),
  * @param {...String} kickReason The reason for kicking the user
  */
 module.exports.execute = async (client, message, mention, ...kickReason) => {
-	run(client, message, mention, kickReason.join(' '), 'kick');
+	run(client, message, mention, kickReason.join(' '), 'Kick');
 };
 
 /**
