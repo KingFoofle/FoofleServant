@@ -2,7 +2,8 @@
 
 const Product = require('./Database/Schema/Product.js'),
 	fs = require('fs'),
-	mongoose = require('mongoose');
+	mongoose = require('mongoose'),
+	{ colors } = require('./Tools/constants');
 
 // Importing this allows you to access the environment variables of the running node process
 require('dotenv').config();
@@ -26,6 +27,8 @@ async function update() {
 			'module.exports.execute = async (client, interaction, product) => {',
 			'\tconst { member } = interaction,',
 			'\t\t{ _id: productName } = product;',
+			'\t// Return \'reason\' only if the command fails, and the user will not be charged',
+			'\t return { reason: \'Function Not Implemented };\' ',
 			'};'];
 
 		// Create the file if it does not exist
@@ -45,7 +48,7 @@ async function update() {
  * @param {String[]} colors
  * @returns {Product[]}
  */
-function generateColorProducts(colors) {
+function generateColorProducts() {
 	const toReturn = [];
 	colors.forEach(color => toReturn.push(
 		new Product({
@@ -58,13 +61,11 @@ function generateColorProducts(colors) {
 	return toReturn;
 }
 
-const colors = ['red', 'blue', 'green', 'purple'];
-
 // * Products * //
 const products = [
 
 
-].concat(generateColorProducts(colors));
+].concat(generateColorProducts());
 
 update();
 
