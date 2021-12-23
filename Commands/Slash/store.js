@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders'),
 	StoreMenu = require('../../Tools/menu.js'),
-	PRODUCTS_PER_PAGE = 2;
+	PRODUCTS_PER_PAGE = 5;
 
 exports.data = new SlashCommandBuilder()
 	.setName('store')

@@ -8,24 +8,34 @@ module.exports = async (client, interaction, product) => {
 		user = await userDB.findById(member.id),
 		command = commands.get(commandTypes.PRODUCT).get(product._id);
 
-	let message;
+	const embed = client.tools.createEmbed();
 
 	// User cannot afford this product
-	if (user.currency < product.price) {message = 'You cannot afford this purchase!';}
+	if (user.currency < product.price) {embed.addField('Purchase Failed', 'You cannot afford this product');}
 
 	else {
 		try {
 			// Execute the command
-			await command.execute(client, interaction, product);
-			// If we are here, it means that the command did its job and we should charge the user
-			await userDB.findByIdAndUpdate(member.id, { $inc: { currency: -product.price } });
-			message = 'Your purchase has been successful!';
+			const result = await command.execute(client, interaction, product);
+
+			// The command dictates why the purchase has failed
+			if (result && result.reason) {
+				embed.addField('Purchase Failed', result.reason)
+					.addField('\u200B', 'You have not been charged for this purchase');
+			}
+
+			else {
+				// If we are here, it means that the command did its job and we should charge the user
+				embed.addField('Purchase success', 'Thank you for shopping at the Foof Store');
+				await userDB.findByIdAndUpdate(member.id, { $inc: { currency: -product.price } });
+			}
 		}
 		catch (err) {
-			message = 'An Error has Occurred. You have not been charged for this purchase.';
+			embed.addField('An error has occurred', err.message)
+				.addField('\u200B', 'You have not been charged for this purchase');
 			logger.error(err);
 		}
 	}
 
-	interaction.reply({ content:message, ephemeral:true });
+	interaction.reply({ embeds:[embed], ephemeral:true });
 };

@@ -10,8 +10,22 @@ let client;
  * Initialize the tools by giving them access to the `DiscordClient`
  * @param {import('discord.js').Client} c - The client for each tool to use
  */
-exports.init = function(c) {
+exports.init = c => {
 	client = c;
+};
+
+/**
+ * Assign a Color role to the given guild member
+ * @param {import('discord.js').GuildMember} member
+ * @param {String} color
+ */
+exports.giveColor = (member, color) => {
+	const { colors } = client.constants;
+	if (colors.includes(color)) {
+		colors.forEach(c => this.removeRole(member, c));
+		this.giveRole(member, color);
+	}
+
 };
 
 /**
@@ -19,27 +33,62 @@ exports.init = function(c) {
  * @param {import('discord.js').User} user - The user the convert
  * @returns {import('discord.js').GuildMember} The 	GuildMember` representation of the `user`
  */
-exports.userToMember = function(user) {
+exports.userToMember = user => {
 	const { GUILD_ID } = client.env;
 	return client.guilds.cache.get(GUILD_ID).members.cache.get(user.id);
 };
 
 /**
- * Assigns the Role to the given Member or User, if said role exists
- * @param {import('discord.js').GuildMember | import('discord.js').User } member The user to give the role to
- * @param {String} roleName The name of the role to give
+ *
+ * @param {import('discord.js').GuildMember} member
+ * @param {String} roleName
+ * @param {String} type
  */
-exports.giveRole = (member, roleName) => {
-	const { roles, guild, user } = member,
+async function modifyRole(member, roleName, type = 'add') {
+	const { roles, guild } = member,
 		{ logger } = client,
 		role = guild.roles.cache.find(r => r.name === roleName);
 
+	// TODO: Create the role?
 	if (role) {
-		roles.add(role.id);
-		logger.event(`Gave ${user.username} role: ${role.name}`);
+		if (type === 'add') {roles.add(role.id);}
+		else {roles.remove(role.id);}
 	}
 
 	else {logger.warn(`${guild.name} does not have a role named: ${roleName}`);}
+}
+
+/**
+ * Remove the Role to the given Member, if said role exists
+ * @param {import('discord.js').GuildMember} member The member to remove the role to
+ * @param {String} roleName The name of the role to remove
+ */
+exports.removeRole = async (member, roleName) => {
+	if (this.hasRole(member, roleName)) {
+		await modifyRole(member, roleName, 'remove');
+		client.logger.event(`Removed ${roleName} from ${member.user.username}`);
+	}
+};
+
+/**
+ * Assigns the Role to the given Member, if said role exists
+ * @param {import('discord.js').GuildMember} member The member to give the role to
+ * @param {String} roleName The name of the role to give
+ */
+exports.giveRole = async (member, roleName) => {
+	if (!this.hasRole(member, roleName)) {
+		await modifyRole(member, roleName, 'add');
+		client.logger.event(`Gave ${member.user.username} role: ${roleName}`);
+	}
+};
+
+/**
+ * Checks if the given member contains the role name
+ * @param {import('discord.js').GuildMember} member The member check roles
+ * @param {String} roleName The name of the role to give
+ */
+exports.hasRole = (member, roleName) => {
+	return member.roles.cache.some(role => role.name.toLowerCase() === roleName.toLowerCase());
 };
 
 
@@ -67,19 +116,16 @@ exports.msToTime = (s) => {
 	return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
 };
 
-exports.hasRoleName = (member, roleName) => {
-	return member.roles.cache.some(role => role.name.toLowerCase() === roleName.toLowerCase());
+
+exports.adminVerification = (member) => {
+	return this.hasRole(member, 'administrator');
 };
 
-exports.adminVerification = function(member) {
-	return this.hasRoleName(member, 'administrator');
+exports.modVerification = (member) => {
+	return this.hasRole(member, 'moderator');
 };
 
-exports.modVerification = function(member) {
-	return this.hasRoleName(member, 'moderator');
-};
-
-exports.isConnectedToVoiceChannel = function(member) {
+exports.isConnectedToVoiceChannel = (member) => {
 	const { voice: voiceState } = member;
 	return voiceState && voiceState.channel;
 };
@@ -88,6 +134,6 @@ exports.isConnectedToVoiceChannel = function(member) {
  *
  * @returns {MessageEmbed}
  */
-exports.createEmbed = function() {
+exports.createEmbed = () => {
 	return new MessageEmbed().setColor(process.env.EMBED_COLOR);
 };
