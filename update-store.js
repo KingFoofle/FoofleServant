@@ -20,6 +20,7 @@ async function update() {
 
 		const content = ['/**',
 			'\t* Execute the logic that should be run when the user buys this Product',
+			'\t* TODO: Update this description with what the execute command does',
 			'\t* @param {import(\'discord.js\').Client} client The Discord Client',
 			'\t* @param {import(\'discord.js\').ButtonInteraction} interaction The Button Interaction triggered by the Member',
 			'\t* @param {import(\'mongoose\').Model} product The Product that the Member purchased',
@@ -27,8 +28,8 @@ async function update() {
 			'module.exports.execute = async (client, interaction, product) => {',
 			'\tconst { member } = interaction,',
 			'\t\t{ _id: productName } = product;',
-			'\t// Return \'reason\' only if the command fails, and the user will not be charged',
-			'\t return { reason: \'Function Not Implemented };\' ',
+			'\t// TODO: Return \'reason\' only if the command fails, and the user will not be charged',
+			'\treturn { reason: \'Function Not Implemented\' };',
 			'};'];
 
 		// Create the file if it does not exist

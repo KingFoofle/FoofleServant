@@ -25,4 +25,4 @@ exports.customEmojiIdToRoleName = {
 	// None
 };
 
-exports.colors = ['red', 'blue', 'green', 'purple'];
+exports.colors = ['red', 'blue', 'green', 'purple', 'cyan'];
