@@ -1,4 +1,4 @@
-const { colorCmd } = require('./blueNickname');
+const { execute } = require('./blueNickname');
 /**
 	* Give the user a Cyan Nickname
 	* @param {import('discord.js').Client} client The Discord Client
@@ -6,5 +6,5 @@ const { colorCmd } = require('./blueNickname');
 	* @param {import('mongoose').Model} product The Product that the Member purchased
 */
 module.exports.execute = async (client, interaction, product) => {
-	return colorCmd(client, interaction, 'cyan');
+	return execute(client, interaction, product, 'cyan');
 };

@@ -4,11 +4,7 @@
 	* @param {import('discord.js').ButtonInteraction} interaction The Button Interaction triggered by the Member
 	* @param {import('mongoose').Model} product The Product that the Member purchased
 */
-exports.execute = async (client, interaction, product) => {
-	return this.colorCmd(client, interaction, 'blue');
-};
-
-exports.colorCmd = async (client, interaction, color) => {
+module.exports.execute = async (client, interaction, product, color = 'blue') => {
 	const { hasRole, giveColor } = client.tools;
 	if (hasRole(interaction.member, color)) {return { reason: 'User already has this color' };}
 	giveColor(interaction.member, color);

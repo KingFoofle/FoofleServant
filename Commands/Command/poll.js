@@ -19,15 +19,15 @@ exports.execute = async (client, message, ...pollPrompt) => {
 	const pollQuestion = pollPrompt.join(' ').trim();
 	embedReply.setTitle('A poll has begun!')
 		.addField(message.author.username + ' asked', client.formatter.italic(pollQuestion))
-		.addField('\u200B', 'The poll will last 1 hour');
+		.addField('\u200B', 'The poll will last 4 hours');
 
 	const msg = await message.channel.send({ embeds:[embedReply] });
 	const collector = msg.createReactionCollector({
 		// Only Foof can stop the poll
 		filter: (r, u) => r.emoji.name !== '🛑' || u.id === foofId,
 
-		// Run for 1 hour
-		time: 1000 * 60 * 60,
+		// Run for 4 hours
+		time: 1000 * 60 * 60 * 4,
 	})
 		.on('collect', r => {
 			if (r.emoji.name === '🛑') {collector.stop('🛑 was pressed by Foofle');}
