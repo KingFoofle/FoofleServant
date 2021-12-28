@@ -11,10 +11,6 @@ module.exports = async (client, message) => {
 		// { userToMember } = client.tools,
 		{ acceptedCommandTypes } = client.constants;
 
-	// Turn the User into a Member
-	// TODO: Check if message.member exists
-	// member = await userToMember(user);
-
 	// Don't do anything with bot messages
 	if (user.bot) { return; }
 
