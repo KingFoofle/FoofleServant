@@ -11,7 +11,7 @@ exports.execute = async (client, message, mode) => {
 	if (!mode) mode = '';
 	if (queue) {
 		let repeatMode, field;
-		const reply = tools.createQueue();
+		const reply = tools.createEmbed();
 		switch (mode.trim()) {
 		// Synonyms for off
 		case 'disable':

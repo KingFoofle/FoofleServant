@@ -1,3 +1,5 @@
+const { RepeatMode } = require('discord-music-player');
+
 /**
  * Display the Music Queue of the Bot
  * @param {import('discord.js').Client} client The Discord Client
@@ -27,12 +29,15 @@ exports.execute = async (client, message) => {
 		.addField('Currently Playing', formatter.italic(firstSong.name), true)
 		.addField('Duration', queue.createProgressBar().times, true);
 
-	if (content) {
-		queueEmbed.addFields([
-			{ name: '\u200B', value: '\u200B' },
-			{ name: 'Songs', value: content, inline: true },
-			{ name: 'Duration', value: duration, inline: true },
-		]);
+	queueEmbed.addFields([
+		{ name: '\u200B', value: '\u200B' },
+		{ name: 'Songs', value: content, inline: true },
+		{ name: 'Duration', value: duration, inline: true },
+	]);
+
+
+	if (queue.repeatMode !== RepeatMode.DISABLED) {
+		queueEmbed.addField('Repeat Mode', queue.repeatMode === RepeatMode.QUEUE ? 'Queue' : 'Song');
 	}
 
 	if (songsNotDisplayed > 0) {
