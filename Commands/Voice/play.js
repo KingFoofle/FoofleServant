@@ -20,11 +20,18 @@ exports.play = async (client, message, functionToUse, searchOrLink) => {
 	if (!queuePresent) {player.emit('clientConnect', queue, queue.connection.channel);}
 
 	// Add the Song to the queue, passing in the arguments as a parameter
-	(functionToUse === 'play' ? queue.play : queue.playlist) (searchOrLink)
-		.catch(err => {
+	if (functionToUse === 'play') {
+		queue.play(searchOrLink).catch(err => {
 			logger.error(err);
 			if (!queuePresent) queue.stop();
 		});
+	}
+	else {
+		queue.playlist(searchOrLink).catch(err => {
+			logger.error(err);
+			if (!queuePresent) queue.stop();
+		});
+	}
 };
 
 /**
