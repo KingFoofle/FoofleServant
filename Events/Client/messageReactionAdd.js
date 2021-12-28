@@ -11,9 +11,7 @@ module.exports = async (client, reaction, user) => {
 	if (user.bot) return;
 	if (reaction.partial) {
 		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
-		try {
-			await reaction.fetch();
-		}
+		try {await reaction.fetch();}
 		catch (error) {
 			// Return as some properties may be undefined/null
 			return logger.error(`Something went wrong when fetching the message: ${error}`);
