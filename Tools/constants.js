@@ -26,3 +26,8 @@ exports.customEmojiIdToRoleName = {
 };
 
 exports.colors = ['red', 'blue', 'green', 'purple', 'cyan'];
+
+/**
+ * The command types that Users can use
+ */
+exports.acceptedCommandTypes = [this.commandTypes.COMMAND, this.commandTypes.VOICE];

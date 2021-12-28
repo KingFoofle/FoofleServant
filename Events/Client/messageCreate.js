@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
 		{ userSchema:userDB } = client.database,
 		{ PREFIX } = client.env,
 		// { userToMember } = client.tools,
-		{ commandTypes } = client.constants;
+		{ acceptedCommandTypes } = client.constants;
 
 	// Turn the User into a Member
 	// TODO: Check if message.member exists
@@ -25,8 +25,7 @@ module.exports = async (client, message) => {
 		const args = message.content.slice(PREFIX.length).trim().split(/ +/g),
 
 			// Shift() removes and returns the 0th index of an array
-			commandName = args.shift(),
-			acceptedCommandTypes = [commandTypes.COMMAND, commandTypes.VOICE];
+			commandName = args.shift();
 
 		// Search for a valid command
 		let command;

@@ -12,7 +12,7 @@ const sendHelpMenu = (client, message) => {
 				client.formatter.codeBlock(this.usage))];
 
 	// What command types should be displayed in the help menu
-	const acceptedCommandTypes = [client.constants.commandTypes.COMMAND, client.constants.commandTypes.VOICE];
+	const { acceptedCommandTypes } = client.constants;
 
 	// How many commands should be displayed per page
 	const commandsPerPage = 10;
@@ -62,8 +62,7 @@ const sendHelpMenu = (client, message) => {
  * @param  {...any} otherArgs The arguments passed in by the user
  */
 exports.execute = async (client, message, commandName) => {
-	const { commandTypes } = client.constants;
-	const acceptedCommandTypes = [commandTypes.COMMAND, commandTypes.VOICE];
+	const { acceptedCommandTypes } = client.constants;
 	// The user called $help instead of $help (commandName)
 	if (!commandName) {return sendHelpMenu(client, message);}
 
