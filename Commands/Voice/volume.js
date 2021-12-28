@@ -6,7 +6,8 @@
  */
 exports.execute = async (client, message, volume) => {
 	const vol = parseInt(volume);
-	if (vol) {client.player.getQueue(message.guildId).setVolume(vol);}
+	const queue = client.player.getQueue(message.guildId);
+	if (vol && queue) {queue.setVolume(vol);}
 };
 
 /**

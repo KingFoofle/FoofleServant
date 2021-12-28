@@ -4,7 +4,8 @@
  * @param {import('discord.js').Message} message The message that triggered the command
  */
 exports.execute = async (client, message) => {
-	client.player.getQueue(message.guildId).setPaused(true);
+	const queue = client.player.getQueue(message.guildId);
+	if (queue) {queue.setPaused(true);}
 };
 
 /**

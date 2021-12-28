@@ -5,7 +5,8 @@
 
  */
 exports.execute = async (client, message) => {
-	client.player.getQueue(message.guildId).setPaused(false);
+	const queue = client.player.getQueue(message.guildId);
+	if (queue) {queue.setPaused(false);}
 };
 
 /**
