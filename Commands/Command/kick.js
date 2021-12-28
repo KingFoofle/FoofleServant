@@ -23,3 +23,10 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Insufficient Permissions' ;
 	}
 };
+
+exports.description = 'Kick a Member from the server.';
+
+/**
+ * How the user should 'call' the command. This is used in the 'help' command
+ */
+exports.usage = '$kick [@User]';

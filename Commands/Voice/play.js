@@ -8,13 +8,10 @@
 exports.play = async (client, message, functionToUse, searchOrLink) => {
 	const { player, logger } = client,
 		// Check if there was a queue beforehand
-		queuePresent = !!player.getQueue(message.guildId),
+		queuePresent = player.getQueue(message.guildId),
 
 		// Create or get the queue of the Guild
-		queue = player.createQueue(message.guildId, {
-		// Assign the text channel to the queue
-			data: { message },
-		});
+		queue = player.createQueue(message.guildId, { data: { message } });
 
 	// Create or get the Connection to the voice channel
 	await queue.join(message.member.voice.channel);
@@ -23,21 +20,11 @@ exports.play = async (client, message, functionToUse, searchOrLink) => {
 	if (!queuePresent) {player.emit('clientConnect', queue, queue.connection.channel);}
 
 	// Add the Song to the queue, passing in the arguments as a parameter
-	if (functionToUse === 'play') {
-		queue.play(searchOrLink)
-			.catch(err => {
-				logger.error(err);
-				if (!queuePresent) queue.stop();
-			});
-	}
-
-	else {
-		queue.playlist(searchOrLink)
-			.catch(err => {
-				logger.error(err);
-				if (!queuePresent) queue.stop();
-			});
-	}
+	(functionToUse === 'play' ? queue.play : queue.playlist) (searchOrLink)
+		.catch(err => {
+			logger.error(err);
+			if (!queuePresent) queue.stop();
+		});
 };
 
 /**
@@ -61,3 +48,10 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
+
+exports.description = 'Play or add a song to the Queue.';
+
+/**
+ * How the user should 'call' the command. This is used in the 'help' command
+ */
+exports.usage = '$play [Search_Query]';

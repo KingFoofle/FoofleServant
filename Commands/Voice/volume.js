@@ -21,3 +21,10 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
+
+exports.description = 'Set the volume of the music';
+
+/**
+ * How the user should 'call' the command. This is used in the 'help' command
+ */
+exports.usage = '$volume [vol]';

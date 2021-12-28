@@ -20,3 +20,10 @@ exports.execute = async (client, message, id, ...reason) => {
 exports.canBeUsedBy = (client, member) => {
 	return canBeUsedBy(client, member);
 };
+
+exports.description = 'Unban a Member from the server.';
+
+/**
+ * How the user should 'call' the command. This is used in the 'help' command
+ */
+exports.usage = '$unban [User_ID]';

@@ -7,9 +7,11 @@
 exports.execute = async (client, message, index) => {
 	const num = parseInt(index);
 	const queue = client.player.getQueue(message.guildId);
-	if (num && queue) {queue.remove(num);}
+	if (num && queue) {
+		// TODO: Reply to the channel
+		queue.remove(num);
+	}
 
-	// TODO: Reply to the channel
 };
 
 /**
@@ -23,3 +25,10 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
+
+exports.description = 'Remove a song from the Queue.';
+
+/**
+ * How the user should 'call' the command. This is used in the 'help' command
+ */
+exports.usage = '$remove [Song_Position]';

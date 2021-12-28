@@ -19,3 +19,5 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
+
+exports.description = 'Pause the currently playing Queue.';

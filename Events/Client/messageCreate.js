@@ -4,15 +4,16 @@
  * @param {import('discord.js').Message} message The created message
  */
 module.exports = async (client, message) => {
-	const { author: user, content } = message,
+	const { author: user, content, member } = message,
 		{ logger } = client,
 		{ userSchema:userDB } = client.database,
 		{ PREFIX } = client.env,
-		{ userToMember } = client.tools,
-		{ commandTypes } = client.constants,
+		// { userToMember } = client.tools,
+		{ commandTypes } = client.constants;
 
-		// Turn the User into a Member
-		member = await userToMember(user);
+	// Turn the User into a Member
+	// TODO: Check if message.member exists
+	// member = await userToMember(user);
 
 	// Don't do anything with bot messages
 	if (user.bot) { return; }

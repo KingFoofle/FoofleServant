@@ -26,13 +26,9 @@ module.exports.execute = async (client, message) => {
 
 };
 
+exports.description = 'Display the currency of the specified user.';
+
 /**
- * Define the restrictions of who can use this command
- * @param {import('discord.js').Client} client The Discord Client
- * @param {import('discord.js').GuildMember} member The member to check against the restrictions
- * @returns {void | string} `reason` explaining why the member cannot use this command. `void` otherwise
+ * How the user should 'call' the command. This is used in the 'help' command
  */
-// eslint-disable-next-line no-unused-vars
-exports.canBeUsedBy = (client, member) => {
-	// Anyone can use this command
-};
+exports.usage = '$currency (@User)';

@@ -8,8 +8,7 @@ exports.execute = async (client, message) => {
 
 	/** @type {import('discord-music-player').Queue} */
 	const queue = client.player.getQueue(message.guildId);
-
-	// TODO: Check for queue
+	if (!queue) return;
 
 	const firstSong = queue.songs.at(0);
 	if (!firstSong) return message.reply('No songs in the Queue');
@@ -42,15 +41,4 @@ exports.execute = async (client, message) => {
 
 	return message.reply({ embeds: [queueEmbed] });
 
-};
-
-/**
- * Define the restrictions of who can use this command
- * @param {import('discord.js').Client} client The Discord Client
- * @param {import('discord.js').GuildMember} member The member to check against the restrictions
- * @returns {void | string} `reason` explaining why the member cannot use this command. `void` otherwise
- */
-// eslint-disable-next-line no-unused-vars
-exports.canBeUsedBy = (client, member) => {
-	// Anyone can use this command
 };

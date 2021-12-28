@@ -20,3 +20,5 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
+
+exports.description = 'Skip the currently playing song.';

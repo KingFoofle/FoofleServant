@@ -1,13 +1,12 @@
-const { play } = require('./play');
-
 /**
- * Play a Playlist
+ * Shuffle the queue
  * @param {import('discord.js').Client} client The Discord Client
  * @param {import('discord.js').Message} message The message that triggered the command
- * @param {...String} otherArgs The other arguments passed in by the user
+
  */
-exports.execute = async (client, message, ...otherArgs) => {
-	play(client, message, 'playlist', otherArgs.join(' '));
+exports.execute = async (client, message) => {
+	const queue = client.player.getQueue(message.guildId);
+	if (queue) {queue.shuffle();}
 };
 
 /**
@@ -21,10 +20,3 @@ exports.canBeUsedBy = (client, member) => {
 		return 'Not Connected to a Voice Channel!';
 	}
 };
-
-exports.description = 'Add a Playlist to the Queue. Supports Youtube, Spotify, and Apple Music.';
-
-/**
- * How the user should 'call' the command. This is used in the 'help' command
- */
-exports.usage = '$playlist [Playlist_URL]';
