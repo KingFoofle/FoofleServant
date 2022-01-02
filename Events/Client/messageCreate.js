@@ -51,10 +51,13 @@ module.exports = async (client, message) => {
 		}
 	}
 
+	// Server Boosters get a huge boost
+	const increase = client.tools.hasRole(member, 'server booster') ? 3 : 1;
+
 	const data = {
 		_id: user.id,
 		username: user.username,
-		$inc:{ currency:1 },
+		$inc:{ currency: increase },
 	};
 
 	// Upsert creates a new user if one isn't found
